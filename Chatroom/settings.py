@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'sslserver',
     'api',
+    'chatapp',
 ]
 
 MIDDLEWARE = [

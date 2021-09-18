@@ -128,7 +128,7 @@ class ChatRequestProcessor:
         return response
 
     def clear_room_messages(self,data):
-        roomname = data.get('roomname')
+        roomname = data.consumer.room_name
         password = data.get('password')
         response = self.room.clear_room_messages(roomname=roomname, password=password)
         return response

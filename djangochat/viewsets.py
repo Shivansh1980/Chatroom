@@ -6,3 +6,5 @@ from rest_framework.authentication import BasicAuthentication
 class MessageViewset(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+    
