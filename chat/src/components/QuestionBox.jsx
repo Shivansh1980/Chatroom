@@ -135,12 +135,8 @@ export class QuestionBox extends Component {
         chat.take_notification_permissions();
         chat.initializeLoadingScreen("loading");
         show_loading_screen();
-        console.log('websocket connection successful');
-        
         this.message_api.update_active_users();
-
         chat.fetchMessages(this.client, this.username, this.roomname);
-
         document.removeEventListener('copy', function () {
             return;
         })

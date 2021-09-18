@@ -4,9 +4,10 @@ import AnswerBox from './AnswerBox';
 import QuestionBox from './QuestionBox';
 import { CircularProgress } from '@material-ui/core'
 
-// var hostname = window.location.host
-var ws_protocol = window.location.protocol == "https:" ? "wss" : "ws";
-var hostname = '127.0.0.1:8000'
+export var hostname = window.location.host
+export var ws_protocol = window.location.protocol == "https:" ? "wss" : "ws";
+// export var hostname = '127.0.0.1:8000'
+export var optional = 'chatroom/'
 
 export class Home extends Component {
 
@@ -19,7 +20,9 @@ export class Home extends Component {
             ws_protocol
             + '://'
             + hostname
-            + '/ws/chat/'
+            + '/'
+            + optional
+            + 'ws/chat/'
             + this.roomname
             + '/'
             + `?username=${this.props.username}`
@@ -45,7 +48,9 @@ export class Home extends Component {
                 ws_protocol
                 + '://'
                 + hostname
-                + '/ws/chat/'
+                + '/'
+                + optional
+                + 'ws/chat/'
                 + this.roomname
                 + '/'
                 + `?username=${ref.username}`

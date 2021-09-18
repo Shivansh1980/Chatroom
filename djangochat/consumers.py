@@ -46,7 +46,6 @@ class TempConsumer(WebsocketConsumer):
         self.send_message_to_room(response)
 
     def disconnect(self, data):
-        self.close()
         new_users = []
         if(len(self.users)) > 0:
             for user in self.users:
@@ -60,4 +59,4 @@ class TempConsumer(WebsocketConsumer):
                 'username': self.username,
                 'message': {'status': True, 'users': self.users}
             })
-
+        self.close()

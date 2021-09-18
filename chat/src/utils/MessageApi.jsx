@@ -1,5 +1,6 @@
 import axios from "axios";
 import { hide_progress_box } from "../styles/AlterCSS";
+import { hostname, ws_protocol, optional} from '../components/Home'
 
 function toDataURL(file, callback) {
     var reader = new FileReader();
@@ -24,8 +25,9 @@ export function dataUrlToFile(dataurl, filename) {
 
 export class MessageWebApi{
     // hostname = window.location.host;
-    ws_protocol = window.location.protocol == "https:" ? "wss" : "ws";
-    hostname = '127.0.0.1:8000'
+    ws_protocol = ws_protocol
+    hostname = hostname
+    optional = optional
 
     constructor(client) {
         this.api_url = window.location.protocol + '//' + this.hostname+'/';

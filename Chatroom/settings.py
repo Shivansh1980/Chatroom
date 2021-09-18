@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'sslserver',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -148,15 +150,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("localhost", 6379)],
-#         },
-#     },
-# }
 
 CORS_ORIGIN_ALLOW_ALL = True
 WHITELIST = ['polished-morning-29118.pktriot.net']

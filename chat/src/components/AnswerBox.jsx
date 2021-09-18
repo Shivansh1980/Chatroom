@@ -9,28 +9,26 @@ export default function AnswerBox(props) {
     let [status, setStatus] = useState("Please Wait While, We Fetch Messages")
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
-    const client = message_api.get_client();
     const style = makeStyles(answerStyles);
     const classes = style()
-
+    
     useEffect(() => {
+        const client = message_api.get_client();
         client.send(JSON.stringify({
             'command': 'get_messages_having_thread',
             'username': message_api.get_username(),
-            'roomname':message_api.get_roomname()
+            'roomname': message_api.get_roomname()
         }))
         client.onmessage = (e) => {
             const data = JSON.parse(e.data);
             if (data.type == 'thread_messages') {
-                console.log(data);
                 if (data.status == true) {
+                    setLoading(false);
                     setMessages(data.messages);
-                    setLoading(false);
                 }
-                else {
-                    setStatus(data.message);
-                    setLoading(false);
-                }
+            }
+            else {
+                setStatus(data.message);
             }
         }
     }, []);
