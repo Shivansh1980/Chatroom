@@ -1,22 +1,37 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from .utils import ChatRequestProcessor
+from .utils import ChatRequestProcessor, RoomController
 from .models import Message
 from django.dispatch import Signal
 
 class ChatConsumer(WebsocketConsumer):
     users = []
+    room_controller = RoomController()
 
     def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room_group_name = 'chat_%s' % self.room_id
+        self.room_name = self.room_controller.get_room_name_by_id(self.room_id)
 
-        #I am using TokenAuthMiddleware for accessing user from scope
+        if(self.room_name['status'] == True):
+            self.room_name = self.room_name['room_name']
+        else:
+            return
+            
         user = self.scope['user']
+        self.user = user
+
+        try:
+            if user.is_anonymous:
+                return
+        except:
+            pass
 
         if user not in self.users:
             self.users.append(user)
+
+        self.username = user.user.username
 
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -45,7 +60,6 @@ class ChatConsumer(WebsocketConsumer):
                 'message': 'Either you have provided no token in the url or it has been expired.'
             })
             self.scope['user'] = None
-        
 
     def disconnect(self, data):
         try:

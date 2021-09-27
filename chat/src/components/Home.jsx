@@ -1,150 +1,75 @@
-import React, { Component } from 'react'
-import { MessageWebApi } from '../utils/MessageApi';
-import AnswerBox from './AnswerBox';
-import QuestionBox from './QuestionBox';
-import { CircularProgress } from '@material-ui/core'
+import React, {useState, useEffect} from 'react'
+import { homeStyles } from '../styles/ChatStyles'
+import { api_url } from '../global'
+import {ApiRequester} from '../utils/utils'
+import { useSelector, useDispatch, connect } from 'react-redux';
+import { CustomBox } from '../minicomponents/CustomBox'
+import RoomNavigation from './homecomponents/RoomNavigation'
+import Room from './homecomponents/Room'
 
-export var hostname = window.location.host
-export var ws_protocol = window.location.protocol == "https:" ? "wss" : "ws";
-// export var hostname = '127.0.0.1:8000'
-export var optional = 'chatroom/'
+import * as Actions from '../redux/actions'
 
-export class Home extends Component {
+function Home(props) {
+    let username = props.username;
+    let password = props.password;
 
-    constructor(props) {
-        super(props);
-        this.username = this.props.username;
-        this.roomname = this.props.roomname;
+    let api = new ApiRequester(username, password);
+    
+    const dispatch = useDispatch();
+    const state = useSelector(state => state.navigationState);
+    
+    useEffect(() => {
+        
+        dispatch({type: 'UpdateLoading',payload: true})
+        dispatch(Actions.updateUsername(username));
+        dispatch(Actions.updatePassword(password));
 
-        this.client = new WebSocket(
-            ws_protocol
-            + '://'
-            + hostname
-            + '/'
-            + optional
-            + 'ws/chat/'
-            + this.roomname
-            + '/'
-            + `?username=${this.props.username}`
-        );
-
-        this.message_api = new MessageWebApi(this.client);
-
-
-        this.message_api.set_username(this.username);
-        this.message_api.set_roomname(this.roomname);
-
-        this.go_to_chatroom = this.go_to_chatroom.bind(this);
-        this.go_to_answers = this.go_to_answers.bind(this);
-        this.handle_change_room = this.handle_change_room.bind(this);
-    }
-
-    async handle_change_room(username, roomname) {
-        const ref = this;
-        return new Promise(function (resolve, reject) {
-            ref.username = username;
-            ref.roomname = roomname;
-            ref.client = new WebSocket(
-                ws_protocol
-                + '://'
-                + hostname
-                + '/'
-                + optional
-                + 'ws/chat/'
-                + this.roomname
-                + '/'
-                + `?username=${ref.username}`
-            );
-            ref.client.onopen = () => {
-                resolve(ref.client);
+        api.setMethod('get');
+        api.makeRequest('/api/chat/command/get_saved_rooms/').then((response) => {
+            let res = response.data;
+            if (res.status == true) {
+                dispatch(Actions.updateLoading(false))
+                dispatch(Actions.updateRooms(res.data));
             }
-            ref.client.onerror = (e) => {
-                reject('error while connecting to websocket');
+            else {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+                dispatch(Actions.updateLoading(false));
             }
-            ref.client.onclose = () => {
-                reject('connection closed')
-            }
-        })
-    }
-
-    go_to_chatroom() {
-        this.setState({
-            questions_layout: true,
-            answer_layout:false
-        })
-    }
-    go_to_answers() {
-        this.setState({
-            questions_layout: false,
-            answer_layout: true
-        })
-    }
-
-    state = {
-        isConnected:false,
-        questions_layout: false,
-        answer_layout: true,
-    }
-
-    componentDidMount() {
-        var ref = this;
-        this.client.onopen = () => {
-            ref.setState({
-                isConnected: true
-            })
-        }
-        this.client.onclose = () => {
-            ref.setState({
-                isConnected: false
-            })
-        }
-    }
-
-    render() {
-        let answers_layout = this.state.answer_layout;
-        let questions_layout = this.state.questions_layout;
-        let isConnected = this.state.isConnected;
-
-        let layout;
-        if (answers_layout && isConnected) {
-            layout =
-                <div className="AnswerBox">
-                    <AnswerBox
-                        message_api={this.message_api}
-                        username={this.username}
-                        roomname={this.roomname}
-                    changeroom={this.handle_change_room}
-                    go_to_chatroom = {this.go_to_chatroom}
-                    />
-                </div>
-        }
-        else if (questions_layout && isConnected) {
-            layout =
-                <div id="QuestionViewContainer" className="QuestionViewContainer">
-                    <QuestionBox
-                        message_api={this.message_api}
-                        username={this.username}
-                        roomname={this.roomname}
-                        changeroom={this.handle_change_room}
-                    />
-                </div>
-        }
-        else {
-            layout =
-                <div className="loading">
-                    <h3>Please Wait Connecting to Chatroom</h3>
-                    <div>
-                        <CircularProgress />
-                    </div>
-                </div>
-        }
+            
+        }).catch((error) => {
+            dispatch(Actions.updateError(error.message));
+        });
+        api.makeRequest('/api/chat/user/').then((response) => {
+            dispatch(Actions.updateUser(response.data));
+        });
+    }, []);
+    
+    let loading = state.loading;
+    if (loading == false) {
         return (
             <>
-                {layout}
+                <div className="roomcontainer">
+                    <div className="roomcontainer__list">
+                        <RoomNavigation />
+                    </div>
+                    <div className="roomcontainer__room">
+                        <div className="roomheader">
+                            <h1 align="center">Welcome To Chatroom</h1>
+                            <p>Developer Shivansh Shrivastava</p>
+                        </div>
+                        <Room />
+                    </div>
+                </div>
             </>
         )
-        
+    }
+    else {
+        return (<CustomBox boxName="loader" hidden={false} />)
     }
 }
+const mapStateToProps = (state) => ({
+    roomState:state.changeRoom
+});
 
-export default Home
+export default connect(mapStateToProps)(Home)

@@ -1,11 +1,23 @@
 import $ from 'jquery'
 import Push from 'push.js'
 import { google_icon } from './Icons'
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom';
-import { ImageContainer } from '../minicomponents/ImageContainer';
-
 var color_the_message = false;
+
+export function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 export function initializeLoadingScreen(classname) {
     var loading_box = $("." + classname);
@@ -18,22 +30,33 @@ export function initializeLoadingScreen(classname) {
 
 // Loading the messages from the server to the box
 
-export function loadAllMessages(selector, messages, username, roomname) {
-    for (var i = 0; i < messages.length; i++) {
-        var message = messages[i];
-        if (message.isanswer == true)
-            color_the_message = true;
-        if (roomname === message.roomname) {
-            if (message.username === username) {
-                appendMessageRight(selector, message.message, message.username, message.id);
+export function loadAllMessages(data) {
+    let selector = data.selector;
+    let messages = data.messages;
+    let currentUser = data.currentUser;
+    let currentRoom = data.currentRoom;
+
+    let msgbox = document.getElementById(selector);
+
+    if (msgbox) {
+        for (var i = 0; i < messages.length; i++) {
+            var message = messages[i];
+            if (message.isanswer == true)
+                color_the_message = true;
+            if (toString(currentRoom) === toString(message.room)) {
+                if (message.user.id === currentUser.id) {
+                    appendMessageRight(selector, message.message, currentUser.name, message.id);
+                }
+                else {
+                    appendMessageLeft(selector, message.message, message.user.name, message.id);
+                }
             }
-            else {
-                appendMessageLeft(selector, message.message, message.username, message.id);
-            }
+            color_the_message = false;
         }
         color_the_message = false;
+    } else {
+        alert("container for holding messages doesn't exists")
     }
-    color_the_message = false;
 }
 
 export function loadQuestionList(data, username, roomname) {
@@ -65,7 +88,6 @@ export function fetchMessages(client, username, roomname) {
 export function updateMessage(message) {
     let id = 'message_' + message.id;
     let content = document.getElementById(id);
-    console.log('your content : ',content);
     if (content == null) {
         alert('message not exists');
         return;

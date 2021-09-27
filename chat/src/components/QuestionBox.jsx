@@ -6,6 +6,7 @@ import Dropzone from 'react-dropzone'
 import '../minicomponents/CustomBox'
 import CustomBox from '../minicomponents/CustomBox';
 import { FaArrowCircleDown } from 'react-icons/fa'
+
 import {
     show_image_to_text_box,
     hide_image_to_text_box,
