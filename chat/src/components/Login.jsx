@@ -2,14 +2,16 @@ import React, { Component } from 'react'
 import Home from './Home'
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
-import { CustomBox } from '../minicomponents/CustomBox'
+import { CustomBox } from './minicomponents/CustomBox'
 import {Link} from 'react-router-dom'
 import { api_url } from '../global'
 import { getCookie } from '../utils/ChatMessage'
-import {show_info} from '../styles/AlterCSS'
+import { loadImage } from '../utils/utils'
+import { show_info } from '../styles/js/AlterCSS'
 
 export class Login extends React.Component {
     state = {
+        loadingImages: false,
         isLoggedIn: false,
         username: '',
         roomname: '',
@@ -23,34 +25,69 @@ export class Login extends React.Component {
         this.handlePassword = this.handlePassword.bind(this);
         this.handleUsername = this.handleUsername.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.tryLocalLogin = this.tryLocalLogin.bind(this);
     }
-    componentDidMount() {
-        let uname = localStorage.getItem('username')
-        let pass = localStorage.getItem('password')
+
+    tryLocalLogin() {
+        let uname = localStorage.getItem('username');
+        let pass = localStorage.getItem('password');
         let ref = this;
         if (uname && pass) {
             axios({
                 method: 'POST',
                 url: api_url + '/api/chat/user/login/',
-                headers: { 'Content-Type': 'application/json'},
-                data: {username:uname, password:pass}
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                data: { username: uname, password: pass }
             }).then(function (response) {
                 let res = response.data;
                 if (res.status == true) {
+                    // let root = document.getElementById('root');
+                    // root.style.backgroundImage = `url('')`;
                     ref.setState({ username: uname, password: pass });
-                    ref.setState({ isError: false});
+                    ref.setState({ isError: false });
                     ref.setState({ isLoading: false });
                     ref.setState({ isLoggedIn: true });
+                    ref.setState({ loadingImages: false});
+                }
+                else {
+                    alert('failed');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('password');
+                    ref.setState({ isError: res.error });
+                    ref.setState({ isLoading: false });
+                    ref.setState({ isLoggedIn: false });
+                    ref.setState({ loadingImages: false});
                 }
             }).catch(function (error) {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+                ref.setState({
+                    isLoggedIn: false,
+                    loadingImages: false,
+                    isLoading: false
+                });
                 alert(error.message);
             });
+        } else {
+            ref.setState({
+                isLoggedIn: false,
+                loadingImages: false,
+                isLoading: false
+            });
         }
-        this.searchInput.focus();
     }
-    handleSubmit(event) {
-        this.setState({ isLoading: true });
 
+    componentDidMount() {
+        let ref = this;
+        ref.setState({ loadingImages: true });
+        loadImage('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-10.gif', function (src) {
+            let root = document.getElementById('root');
+            root.style.backgroundImage = `url(${src})`;
+            ref.tryLocalLogin(ref);
+        })
+    }
+
+    handleSubmit(event) {
         var username  = this.state.username;
         var password = this.state.password;
 
@@ -71,13 +108,16 @@ export class Login extends React.Component {
                         isLoggedIn: true,
                         isError: false,
                     });
+                    // let root = document.getElementById('root');
+                    // root.style.backgroundImage = `url('')`;
                 }
                 else {
                     ref.setState({
+                        loadingImages: false,
                         isLoading: false,
                         isLoggedIn: false,
                         isError: true,
-                        errorMessage:res.error
+                        errorMessage: res.error,
                     });
                 }
 
@@ -102,9 +142,10 @@ export class Login extends React.Component {
             username: event.target.value
         });
     }
+    
     render() {
         const isLoggedIn = this.state.isLoggedIn;
-        if (isLoggedIn === false) {
+        if (isLoggedIn === false && !this.state.loadingImages) {
             return (
                 <div className="RoomContainer">
                     {this.state.isError ?
@@ -139,6 +180,11 @@ export class Login extends React.Component {
                         
                     </form>
                 </div>
+            )
+        }
+        else if (this.state.loadingImages) {
+            return (
+                <img src={process.env.PUBLIC_URL + '/static/media/loader1.gif'} style={{width: '100%', height:'100%'} }/>
             )
         }
         else {

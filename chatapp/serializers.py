@@ -20,7 +20,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
 
 class MessageSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(many=False)
+    user = UserProfileSerializer(many=False, read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(
+        queryset=UserProfile.objects.all(),
+        source='user',
+        write_only=True
+    )
     class Meta:
         model = Message
         fields = '__all__'

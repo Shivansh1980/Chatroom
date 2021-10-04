@@ -4,7 +4,7 @@ import axios from 'axios';
 import {createReducer} from '@reduxjs/toolkit'
 
 export const initialRoomState = {
-    user2_id: null,
+
     rooms: [],
     loading: false,
     error: null,
@@ -43,9 +43,6 @@ const navigationStateReducer = createReducer(initialRoomState, (builder) => {
     builder.addCase('UpdateError', (state, action) => {
         state.error = action.payload;
     })
-    builder.addCase('UpdateUser2_id', (state, action) => {
-        state.user2_id = action.payload;
-    })
     builder.addCase('UpdateState', (state, action) => {
         state.state = action.payload;
     })
@@ -64,7 +61,7 @@ const roomStateReducer = createReducer(roomState, (builder) => {
 })
 
 const rootReducer = combineReducers({
-    navigationState: navigationStateReducer,
+    roomNavState: navigationStateReducer,
     roomState: roomStateReducer,
     userData: userDataReducer,
 });

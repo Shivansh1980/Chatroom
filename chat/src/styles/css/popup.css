@@ -1,0 +1,25 @@
+.popup_file__container{
+    display: flex;
+    justify-content: flex-start;
+    padding:15px;
+    font-size:20px;
+    background-color:white;
+    color:black;
+    font-weight: bolder;
+    z-index:2;
+    width: 350px;
+}
+.popup_file__form{
+    display: grid;
+}
+.popup_file__form > div{
+    margin: 5px;
+    padding: 5px;
+}
+.upload_progress_container{
+    padding: 15px;
+    display: grid;
+    width:50%;
+    margin:5px;
+    background-color:white;
+}

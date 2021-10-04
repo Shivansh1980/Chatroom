@@ -40,6 +40,10 @@ class Message(models.Model):
     def last_40_messages():
         return Message.objects.order_by('timestamp').all()[:40]
 
+class ChatGroup(models.Model):
+    id = models.AutoField(primary_key=True)
+    group_name = models.CharField(max_length=50)
+    users = models.ManyToManyField(UserProfile, related_name='chatgroup')
 
 class MoodleAuthentication(models.Model):
     name = models.CharField(max_length=50)

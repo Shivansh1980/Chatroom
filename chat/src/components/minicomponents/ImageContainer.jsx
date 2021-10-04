@@ -7,7 +7,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Paper from '@material-ui/core/Paper';
-import {imageStyles} from '../styles/ChatStyles'
+import {imageStyles} from '../../styles/js/ChatStyles'
 import { withStyles } from "@material-ui/core/styles";
 
 export class ImageContainer extends Component {

@@ -24,7 +24,9 @@ class RoomController:
             serializer = RoomSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-                return {'status':True,'data':serializer.data, 'message':'creation successfull'}
+                all_rooms = Room.objects.all()
+                all_rooms = RoomSerializer(all_rooms, many=True)
+                return {'status':True,'created_room':serializer.data, 'data':all_rooms.data, 'message':'creation successfull'}
             else:
                 return {'status':True, 'error':serializer.errors}
         except:
@@ -55,20 +57,10 @@ class RoomController:
                 return {'status': False, 'message':'message, user and room_id required'}
                 
             if Room.objects.filter(id=room_id).exists():
-                room = Room.objects.get(id=room_id)
-                user = UserProfile.objects.get(user__id=user_id)
-                serializer = UserProfileSerializer(user)
-                message = MessageSerializer(
-                    data={'room': room, 'message': message, 'user': serializer.data}
-                )
+                message = MessageSerializer(data={'room': room_id, 'message': message, 'user_id': user_id})
                 if message.is_valid():
-                    print('validation success')
-                    print(message.data)
                     obj = message.save()
-                    print('saved')
-                    user = UserProfile.objects.get(id=user_id)
-                    print('user created', user)
-                    return {'status': True, 'message': message.data, 'id': obj.id, 'username': user.user.username, 'name': user.name}
+                    return {'status': True, 'message': message.data, 'id': obj.id}
                 else:
                     print(message.errors)
                     return {'status':False, 'error':message.errors}
@@ -253,13 +245,11 @@ class ChatRequestProcessor:
 
     def new_message(self, data):
         data['room_id'] = self.consumer.room_id
-        data['user'] = self.user.id
-        print(data)
-        
+        data['user_id'] = self.user.id
         response = self.room.save_message(
             room_id = data.get('room_id'),
             message = data.get('message'),
-            user_id = data.get('user')
+            user_id = data.get('user_id')
         )
         if response['status'] == True:
             return {'status': True, 'type': 'new_message', 'data': response['message'], 'id': response['id']}
@@ -283,6 +273,13 @@ class ChatRequestProcessor:
 
     def new_file(self, data):
         data['type'] = 'new_file'
+        file_data = get_file_from_data_url(data['dataURL'])
+        
+        # file = file_data[0]
+        # filename = data['filename']
+
+        extension = file_data[1][1]
+        data['extension'] = extension
         return data
 
     def get_active_users(self, data):

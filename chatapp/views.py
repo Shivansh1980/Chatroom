@@ -4,14 +4,14 @@ from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 from .utils import *
 from .serializers import *
 from api.utils import *
 from .models import *
 from django.contrib.auth import authenticate, login, logout
-
+from rest_framework.decorators import api_view
 
 class Account:
     def get_user_profile(self, user=None, id=None):
@@ -26,7 +26,7 @@ class Account:
             return None
 
     def search_user(self, username=None):
-        users = UserProfile.objects.filter(name__icontains=username)
+        users = UserProfile.objects.filter(user__username__icontains=username)
         serializers = UserProfileSerializer(users, many=True)
         return {'status':True, 'data':serializers.data}
 
@@ -65,10 +65,10 @@ class Account:
 account = Account()
 
 class ChatApi(APIView):
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    authentication_classes = [BasicAuthentication]
     authentication_permissions = [IsAuthenticated]
 
-    def get(self, request, command=None):
+    def post(self, request, command=None):
         data = RequestParser(request)
 
         if command is None:
@@ -87,7 +87,6 @@ class ChatApi(APIView):
 
         if command == 'create_room':
             try:
-                print(userprofile.name)
                 data['user1_id'] = userprofile.id
 
                 if not data.exists('user2_id'):
@@ -131,16 +130,17 @@ class ChatApi(APIView):
 
             except Exception as e:
                 return Response({'status':False, 'message':str(e)})
-
-        elif command == 'search_user':
-            username = data.get('username')
-            return Response(account.search_user(username=username))
         
         elif command == 'get_users':
             userprofiles = UserProfile.objects.all()
             serializer = UserProfileSerializer(userprofiles, many=True)
             return Response({'status': True, 'data': serializer.data})
 
+@api_view(['POST'])
+def search_user(request):
+    data = RequestParser(request)
+    response = account.search_user(username=data.get('username'))
+    return Response(response)
 
 class UserApi(APIView):
     def post(self, request, slug=None):
@@ -157,7 +157,6 @@ class UserApi(APIView):
                 user.save()
                 data['user'] = user.id
                 data['name'] = user.username
-                print(data)
 
                 serializer = UserProfileSerializer(data=data)
                 if serializer.is_valid():

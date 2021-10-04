@@ -4,6 +4,9 @@ import { CircularProgress } from '@material-ui/core'
 import { websocket_url } from '../../global'
 import { MessageWebApi } from '../../utils/utils'
 import { WebMessageHandler } from '../../utils/Handler'
+import { makeDropZone } from '../../utils/utils';
+import FileUploadView from '../popup/FileUploadView';
+import ReactDOM from 'react-dom'
 
 export default function Room(props) {
     // usingDispatch to update redux store
@@ -11,14 +14,16 @@ export default function Room(props) {
 
     //fetching the data from redux store
     const userData = useSelector(state => state.userData);
-    const state = useSelector((state) => state.navigationState);
-    const roomState = useSelector(state => state.roomState)
+    const roomState = useSelector(state => state.roomState);
+    const fileInputRef = useRef(null);
 
     //if room is in null state then text will be displayed
     const [room, setRoom] = useState('');
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(false);
     const [messageApi, setMessageApi] = useState(null);
+    const [isDropzonReady, setIsDropzonReady] = useState(false);
+
     let messageBoxRef = useRef(null);
 
     //if this will be loading then that means websocket is in connecting state
@@ -27,6 +32,7 @@ export default function Room(props) {
 
     async function updateWebsocketState(room_id) {
         return new Promise((resolve, reject) => {
+            if (messageApi) messageApi.close_connection();
             client = new WebSocket(
                 websocket_url
                 + '/'
@@ -55,6 +61,7 @@ export default function Room(props) {
             if (messageBoxRef.current) messageBoxRef.current.innerText = ''
             let new_room = roomState.currentRoom;
             setSelected(true);
+            
             if (new_room != room) {
                 setLoading(true);
                 //new_room = room_1 ==> we have to take substring
@@ -64,6 +71,19 @@ export default function Room(props) {
                     setRoom(new_room);
                     setLoading(false);
                     message_api.fetch_messages();
+                    makeDropZone('message_box', 'input_room_file', function (container, file) {
+                        var div = document.createElement('div');
+                        div.classList.add('absolute_center');
+                        div.classList.add('popup_file__container')
+                        document.body.append(div);
+                        ReactDOM.render(
+                            <FileUploadView
+                                message_api={message_api}
+                                file={file}
+                                self={div}
+                            />, div
+                        );
+                    })
                 }).catch((error) => {
                     setLoading(false);
                 });
@@ -84,6 +104,8 @@ export default function Room(props) {
                 <div className="roomcontainer__room__inputs">
                     <textarea id="input_message" className="room_input" type="text" placeholder="Enter Your Message Here : " />
                     <button id="send_message_button" className="room_input" type="submit" onClick={handleSendMessage}>Send Message</button>
+                    <input ref={fileInputRef} id='input_room_file' className="room_input" type='file' hidden/>
+                    <label htmlFor="input_room_file">Upload File</label>
                 </div>
             </>
         )

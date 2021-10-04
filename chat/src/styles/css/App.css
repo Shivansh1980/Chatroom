@@ -5,12 +5,12 @@
   list-style: none;
   font-family: New Century Schoolbook, TeX Gyre Schola, serif;
 }
-:root{
-  box-sizing: border-box;
+html, body{
+    height: 99.9%;
 }
 
-html, body{
-    height: 100%;
+:root {
+  --room-gradient:linear-gradient(90deg, rgba(242,43,43,1) 20%, rgba(231,27,8,1) 58%, rgba(250,60,5,1) 85%);
 }
 .AnswerBox {
   width:100%;
@@ -21,101 +21,10 @@ html, body{
   justify-items: center;
 }
 
-.loading{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width:100%;
-  height: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.message_loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
-.message_loading span{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(calc(18deg * var(--i)));
-}
-
-.message_loading span::before{
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 15px;
-  width: 15px;
-  background-color: yellow;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #00ff0a
-              0 0 20px #00ff0a
-              0 0 40px #00ff0a
-              0 0 60px #00ff0a
-              0 0 70px #00ff0a;
-  
-  animation: loading 2s linear infinite;
-  animation-delay: calc(0.1s * var(--i));
-}
-@keyframes loading
-{
-  0%{
-    transform: scale(1);
-  }
-  80%,100%{
-    transform: scale(0);
-  }
-}
-
-.menu{
-  background-color: black;
-  color: white;
-  padding: 10px;
-  height: 90%;
-  width:120px;
-  text-decoration: none;
-  position: fixed;
-  left: 5px;
-  top:5%;
-}
-.menu ul{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.menu ul li {
-  list-style: none;
-  margin: 0 20px;
-  line-height: 40px;
-  font-size: 25px;
-  font-weight: bolder;
-  padding: 0 10px;
-}
-.menu li button{
-  font-size: 20px;
-  background-color: green;
-}
-.menu ul li:hover{
-  background-color: white;
-  color: black;
-  cursor:pointer;
-  border-radius: 10px;
-}
-
 #root{
   height: 100%;
+  margin: 1px;
+  position: relative;
 }
 
 .RoomContainer{
@@ -128,6 +37,7 @@ html, body{
   height: 100%;
 }
 .RoomContainer > h2{
+  color:white;
   margin: 10px;
   padding:10px;
   text-shadow: 2px 2px 5px green;
@@ -140,26 +50,28 @@ html, body{
   align-items:center;
   justify-content: center;
   justify-items: center;
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(70,250,252,1) 100%);
+  background: rgb(209,43,61);
+  background: linear-gradient(90deg, rgba(209,43,61,1) 0%, rgba(22,11,12,1) 31%, rgba(110,29,42,1) 47%, rgba(34,17,21,1) 66%, rgba(213,26,98,1) 100%);
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 0 15px black;
+  animation:flipInX 0.5s linear;
 }
 .RoomForm:hover{
   box-shadow: 0 0 20px black;
 }
 label{
-  color:black;
   font-weight: bolder;
   font-size: 20px;
+  color:white;
 }
 .intro{
   font-weight: bolder;
   margin-bottom: 10px;
   font-size:25px;
-  color: black;
   border: 2px solid black;
   padding: 5px;
+  color:white;
 }
 .input-username, .input-room-name{
   width:340px;
@@ -175,49 +87,13 @@ label{
   padding: 5px;
   margin-top: 15px;
 }
-.connect_message{
-  font-size: 15px;color: black;
-  padding: 5px;
+.input-submit:hover{
+  background-color:black;
+  color:white;
   font-weight: bolder;
-  margin-bottom:10px;
-  text-shadow: 0 0 20px darkred;
-}
-#answers_box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: red;
-  height: 50%;
-  width: 50%;
+  cursor: pointer;
 }
 
-.QuestionViewContainer{
-  display: grid;
-  justify-content: center; 
-  width: 100%;
-  height: 100%;
-}
-.QuestionBoxLayout{
-  display: grid;
-  grid-template-columns: 25% 70%;
-}
-.message_box_container{
-  display: grid;
-  width: 95%;
-  padding: 15px;
-  height: 100%;
-}
-.question_box_header{
-  display: flex;
-  flex-direction:column;
-  align-items: center;
-
-}
-.dropzone{
-  padding: 5px;
-  padding:2em 5px;
-}
 .available_rooms{
   display: flex;
   flex-direction: column;
@@ -235,75 +111,7 @@ label{
   font-size: 20px;
 }
 
-#questions_box{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-self:center;
-  font-weight: bolder;
-  background-color:rgb(36, 20, 20);
-  overflow: scroll;
-  padding: 20px;
-  width: 70vw;
-  max-height: 510px;
-  min-height: 510px;
-  border-radius: 20px;
-  transition: width 1s;
-  box-shadow: 0 0 50px black;
-  scroll-behavior: smooth;
-}
 
-#questions_box::-webkit-scrollbar {
-    width: 15px;
-    height: 0px;
-    z-index: 1;
-}
-
-#questions_box::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(14, 1, 1, 0.3); 
-    border-radius: 10px;
-    background: white;
-}
-
-#questions_box::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: yellow;
-    -webkit-box-shadow: inset 0 0 10px rgba(24, 12, 12, 0.5); 
-}
-.question_input_container{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 80%;
-  margin-top: 5px;
-}
-#input_question{
-  padding: 5px;
-  min-width: 95%;
-  font-size: 20px;
-  height: 100px;
-  margin-bottom: 10px;
-  box-shadow: 0 0 20px white;
-}
-#input_question:hover{
-  box-shadow: 0 0 15px white;
-}
-#post_question_button{
-  font-size: 20px;
-  font-weight: bolder;
-  min-width: 100%;
-  height: 40px;
-  border-radius: 20px;
-  background-color: red;
-  box-shadow: 0 0 10px red;
-}
-#post_question_button:hover{
-  background-color: darkred;
-  color: black;
-  box-shadow: 0 0 10px darkred;
-}
 /* user send message*/
 .right_message_container{
   animation:bounceIn 0.8s;
@@ -349,15 +157,7 @@ label{
   background-color: lightgreen;
   margin: 10px;
 }
-.dropzone{
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  margin: 10px;
-  border: dotted;
-}
+
 .show_image{
   display: block;
   margin-top: 10px;
@@ -487,6 +287,10 @@ label{
   background-color: lightgreen;
   max-width: 410px;
 }
+
+
+/* <----------------------- Top LEVEL DIVS ----------------------> */
+
 .roomcard{
   display: flex;
   animation:bounceInDown 2s;
@@ -515,12 +319,6 @@ label{
   border-radius:50%;
   margin:5px;
 }
-@media screen and (max-width:600px){
-  .roomcard{
-    flex-direction: column;
-    justify-content:center;
-  }
-}
 
 .roomcontainer{
   display:grid;
@@ -533,10 +331,9 @@ label{
   display:flex;
   align-items:center;
   justify-content:center;
-  background-color:white;
+  background:var(--room-gradient);
   flex-direction: column;
   border:1px solid black;
-  height:10%;
 }
 .roomheader h1{
   animation: bounce 1s;
@@ -545,6 +342,10 @@ label{
   display:flex;
   flex-wrap:wrap;
   flex-direction:column;
+  background:url('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-10.gif') no-repeat;
+  background-size:cover;
+  height:100%;
+  width: 100%;
 }
 
 .roomlistheader{
@@ -560,7 +361,8 @@ label{
   justify-content:flex-start;
   width:100%;
   height:100%;
-  background-color:white;
+  background: rgb(214,110,121);
+  background: var(--room-gradient);
   transition:all 0.5s;
 }
 .user_profile__image{
@@ -586,7 +388,7 @@ label{
   font-size: 24px;
   font-weight: bolder;
 }
-.user_profile__adduser{
+.user_profile__addroom{
   display:flex;
   align-items:center;
   justify-content:center;
@@ -598,7 +400,71 @@ label{
   color:white;
   font-weight: bolder;
 }
+.user_profile__addroom:hover {
+  cursor: pointer;
+  background-color:white;
+  border:2px solid black;
+  box-shadow:0 0 2px black;
+  color:black;
+}
 
+/* <----------------- Create Room Container -------------------> */
+
+.create_room_container{
+  display:grid;
+  z-index:1;
+  background-color:white;
+  padding: 5px;
+  box-shadow: 0 0 30px black;
+}
+.user_search_container{
+  margin: 5px 0px;
+}
+.user_search_container > input{
+  height: 35px;
+  font-size:25px;
+  padding:5px;
+}
+.user_search__list{
+  width: 100%;
+}
+.create_room_profileview{
+  border:2px solid black;
+  margin:2px;
+}
+.create_room_profileview:hover{
+  background-color:black;
+  color:white;
+  cursor:pointer;
+}
+.create_room__form{
+  display: grid;
+  background-color: white;
+  padding:5px;
+  z-index:1;
+}
+.create_room__form__input{
+  height: 35px;
+  font-size: 20px;
+  padding: 2px;
+}
+.create_room__form__button{
+  height: 35px;
+  font-size: 20px;
+  font-weight: bolder;
+  background-color:lightgreen;
+}
+.create_room__form__button:hover{
+  cursor:pointer;
+  background-color: black;
+  color:white;
+}
+
+/* <-----------------Update Profile View ---------------> */
+
+label{
+  color:black;
+}
 .update_profile_container{
   display:grid;
   font-size: 20px;
@@ -624,12 +490,30 @@ label{
   background-color:red;
 }
 .update_profile__header{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+  align-content: center;
+  justify-content: center;
   color:black;
 }
 .update_profile__header > img{
   width:100px;
   height:100px;
+  margin: 15px 5px;
   border-radius:50%;
+}
+.update_profile__header_button{
+  font-size: 18px;
+  padding:10px;
+  background-color:rgb(135, 156, 135);
+  border-radius:20%;
+  cursor:pointer;
+}
+.update_profile__header_button:hover {
+  background-color:black;
+  color:white;
 }
 .update_profile__form{
   display:flex;
@@ -642,55 +526,72 @@ label{
   font-size:20px;
   margin:10px 0px;
 }
-.update_profile__form input:hover{
-  
-}
-@media screen and (max-width:600px){
-  .roomcard{
-    flex-direction: column;
-    justify-content:center;
-  }
-  .user_profile_container{
-    max-width:100%;
-    height:95%;
-    display:flex;
-    flex-direction:column;
-    align-items: center;
-    justify-content: center;
-  }
+
+
+/*  <--------------Room View -------------------> */
+
+.dropzone__over{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color:white ;
+    border-radius:2%;
+    border: 5px dotted green;
+    z-index:3;
 }
 
-@media screen and (max-width:400px){
-  .roomcontainer{
-    display:grid;
-    grid-template-columns: 25% 75%;
-  }
-  .roomcontainer__list{
-    
-  }
+.dropzone__over::before{
+  content: "File Will Be Uploaded Directly When You Drop";
+  position:sticky;
+  background-color: white;
+  color:black;
+  box-shadow: 0 0 20px black;
+  border-radius:10%;
+  font-size: 18px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width:90%;
+  height: 10%;
+  top:10px;
 }
 
 .roomcontainer__room{
-  display:flex;
-  flex-direction:column;
-  justify-content:stretch;
-  background-color:white;
+  display:grid;
+  grid-template-rows: 10% minmax(200px, 560px) 10%;
 }
+
 .roomcontainer__room__messagebox{
   display:flex;
   flex-direction:column;
-  height:90%;
   background-image:url('https://i.pinimg.com/originals/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg');
   padding:5px 10px;
   z-index:1;
   overflow-y:scroll;
-  max-height: 550px;
+  min-height: 200px;
+  max-height: 600px;
 }
+
 .roomcontainer__room__inputs{
   display:grid;
-  grid-template-columns: 80% 20%;
-  height: 10%;
+  grid-template-columns: 70% 15% 15%;
   overflow:hidden;
+}
+.roomcontainer__room__inputs label {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-color:black;
+  color:white;
+  padding:10px;
+}
+
+.roomcontainer__room__inputs label:hover{
+  cursor:pointer;
+  background-color:white;
+  color:black;
+  box-shadow: 0 0 20px black;
 }
 .roomcontainer__list__searchbox{
   display:grid;
@@ -822,8 +723,37 @@ label{
   border-radius:10%;
 }
 
+.file_container{
+  background-color:green;
+  box-shadow: 0 0 10px solid black;
+  padding: 10px;
+  margin: 2px;
+  max-width: 50%;
+  border:5px solid white;
+  margin-top:10px;
+}
+
+.file_container > a {
+  display: block;
+  padding: 10px;
+  background-color:black;
+  color:white;
+  font-size:20px;
+  text-decoration: none;
+  margin-top:10px;
+  box-shadow: 0 0 5px black;
+}
+.file_container > a:hover{
+  cursor:pointer;
+  background-color:white;
+  color:black;
+}
+
 /* ---------------------Positioning Elements ------------------------ */
 
+.hide {
+  display: none;
+}
 .absolute_center{
   display:flex;
   flex-wrap: wrap;
@@ -859,9 +789,9 @@ label{
   justify-content: center;
   flex-direction: column;
   position: absolute;
-  top: 50%;
   left:50%;
-  transform: translate(-50%, -300%);
+  top:10%;
+  transform: translate(-50%, -50%);
   animation: slideUp 0.5s;
   background-color: white;
   color:black;
@@ -871,12 +801,21 @@ label{
   box-shadow: 0 0 20px black;
   border:5px solid black;
   z-index:2;
+  animation: slideDown 1s;
 }
-@keyframes slideUp {
+.info_box p{
+  text-align: center;
+}
+@keyframes slideDown {
   0%{
-    transform: translate(-50%, -400%);
+    top:-10%;
   }
   100%{
-    transform: translate(-50%, -300%);
+    top:10%;
   }
+}
+
+.background_image_loading{
+  background: url('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-2.gif');
+  z-index:3;
 }

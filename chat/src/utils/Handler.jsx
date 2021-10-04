@@ -1,10 +1,13 @@
 import $ from 'jquery'
 import * as chat from './ChatMessage';
-import { hide_loading_screen, display_questions_box_items_at_start } from '../styles/AlterCSS'
+import { showNotification } from './utils';
+import { hide_loading_screen, display_questions_box_items_at_start } from '../styles/js/AlterCSS'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-import ImageContainer from '../minicomponents/ImageContainer'
-import {show_info} from '../styles/AlterCSS'
+import ImageContainer from '../components/minicomponents/ImageContainer'
+import FileContainer from '../components/minicomponents/FileContainer'
+import { show_info } from '../styles/js/AlterCSS'
+
 export class WebMessageHandler {
     constructor(message_api) {
         this.message_api = message_api;
@@ -44,7 +47,7 @@ export class WebMessageHandler {
                 }
 
                 if (!document.hasFocus()) {
-                    chat.showNotification(data.username, data.roomname, data.message);
+                    showNotification(data.username, data.roomname, data.message);
                 }
                 let message = data.data;
                 if (message.user.id === this.user.id) {
@@ -70,18 +73,31 @@ export class WebMessageHandler {
             }
                 
             else if (data.type === 'new_file') {
+                let image_extensions = ['jpg', 'JPG', 'png', 'PNG', 'jpeg', 'JPEG']
                 var box = document.getElementById(selector);
                 var div = document.createElement('div');
-                div.className = "chatbox_image_container";
-                div.id = "image_container_" + data.id;
                 box.appendChild(div);
-                ReactDOM.render(
-                    <ImageContainer
-                        id={data.id}
-                        src={data.dataURL}
-                        message_api={this.message_api}
-                    />, div
-                );
+                if (image_extensions.indexOf(data.extension) > 0) {
+                    div.className = "chatbox_image_container";
+                    div.id = "image_container_" + data.id;
+                    ReactDOM.render(
+                        <ImageContainer
+                            id={data.id}
+                            src={data.dataURL}
+                            message_api={this.message_api}
+                        />, div
+                    );
+                } else {
+                    div.className = "file_container";
+                    div.id = "file_container_" + data.id;
+                    ReactDOM.render(
+                        <FileContainer
+                            id={data.id}
+                            dataURL={data.dataURL}
+                            filename={data.filename}                            
+                        />, div
+                    )
+                }
             }
                 
             else if (data.type == 'active_users') {

@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { CustomBox } from '../minicomponents/CustomBox'
+import { CustomBox } from './minicomponents/CustomBox'
 import { api_url } from '../global'
 import { CircularProgress } from '@material-ui/core'
-import {getCookie} from '../utils/ChatMessage'
+import { getCookie } from '../utils/ChatMessage'
+import {show_info} from '../styles/js/AlterCSS'
 
 export default function Signup() {
     let [username, setUsername] = useState('');
@@ -19,7 +20,7 @@ export default function Signup() {
             if (password == confirmPassword) {
                 axios({
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                    headers: { 'Content-Type': 'application/json'},
                     url: api_url + '/api/chat/user/signup/',
                     data:{username:username, password:password}
                 }).then((response) => {
@@ -27,7 +28,15 @@ export default function Signup() {
                     if (res.status == true) {
                         setError(null);
                         setLoading(false);
-                        alert('User Created Successfully');
+                        setUsername('');
+                        setPassword('');
+                        setConfirmPassword('');
+                        show_info({
+                            title: 'Room',
+                            content: 'Login Successful',
+                            color: 'green',
+                            time: 15
+                        });
                     }
                     else {
                         setLoading(false);
@@ -38,6 +47,14 @@ export default function Signup() {
                 setError('Password Not Matched');
                 setLoading(false);
             }
+        } else {
+            setLoading(false);
+            show_info({
+                title: 'Room',
+                content: 'Username or Password Not Provided',
+                color: 'red',
+                time: 5
+            });
         }
         e.preventDefault();
     }

@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import { homeStyles } from '../styles/ChatStyles'
-import { api_url } from '../global'
 import {ApiRequester} from '../utils/utils'
 import { useSelector, useDispatch, connect } from 'react-redux';
-import { CustomBox } from '../minicomponents/CustomBox'
+import { CustomBox } from './minicomponents/CustomBox'
 import RoomNavigation from './homecomponents/RoomNavigation'
 import Room from './homecomponents/Room'
-
+import { useMediaQuery } from 'react-responsive';
 import * as Actions from '../redux/actions'
+import { BiMenu } from 'react-icons/bi'
+
 
 function Home(props) {
     let username = props.username;
@@ -16,15 +16,18 @@ function Home(props) {
     let api = new ApiRequester(username, password);
     
     const dispatch = useDispatch();
-    const state = useSelector(state => state.navigationState);
+    const [drawer, setDrawer] = useState(false);
+    const state = useSelector(state => state.roomNavState);
+    const roomState = useSelector(state => state.roomState);
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 600px)' })
     
     useEffect(() => {
-        
+
         dispatch({type: 'UpdateLoading',payload: true})
         dispatch(Actions.updateUsername(username));
         dispatch(Actions.updatePassword(password));
 
-        api.setMethod('get');
+        api.setMethod('post');
         api.makeRequest('/api/chat/command/get_saved_rooms/').then((response) => {
             let res = response.data;
             if (res.status == true) {
@@ -40,23 +43,55 @@ function Home(props) {
         }).catch((error) => {
             dispatch(Actions.updateError(error.message));
         });
+        api.setMethod('get');
         api.makeRequest('/api/chat/user/').then((response) => {
             dispatch(Actions.updateUser(response.data));
         });
     }, []);
+    useEffect(() => {
+        if (roomState.currentRoom) {
+            setDrawer(false);
+        }
+    }, [roomState]);
+
+    function openCloseDrawer(e) {
+        if (drawer) setDrawer(false);
+        else setDrawer(true);
+    }
+
+    let header = null;
+    if (!isTabletOrMobile) {
+        header = <div id="room_navigation" className="roomcontainer__list layout">
+            <RoomNavigation/>
+        </div>
+    } else {
+        if (drawer)
+            header =
+                <div id="room_navigation" className="roomcontainer__list layout">
+                    <RoomNavigation />
+                </div>
+        else
+            header = null
+    }
     
     let loading = state.loading;
     if (loading == false) {
         return (
             <>
                 <div className="roomcontainer">
-                    <div className="roomcontainer__list">
-                        <RoomNavigation />
-                    </div>
-                    <div className="roomcontainer__room">
+                    
+                    {header}
+                    <div className="roomcontainer__room layout">
                         <div className="roomheader">
-                            <h1 align="center">Welcome To Chatroom</h1>
-                            <p>Developer Shivansh Shrivastava</p>
+                            {isTabletOrMobile ?
+                                <div className="roomheader__menu_icon" onClick={openCloseDrawer}>
+                                    <BiMenu size={40} />
+                                </div> : null
+                            }
+                            <div className="roomheader__content">
+                                <h2 align="center">Welcome To Chatroom</h2>
+                                <p>Developer Shivansh Shrivastava</p>
+                            </div>
                         </div>
                         <Room />
                     </div>

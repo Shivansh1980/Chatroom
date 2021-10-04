@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {CustomBox} from '../minicomponents/CustomBox'
+import {CustomBox} from '../../components/minicomponents/CustomBox'
 
 export function show_image_to_text_box() {
     $(".image_to_text_box").css({
@@ -47,7 +47,7 @@ export function hide_progress_box() {
 export function show_info(data = {title:'', content:'', color:'', time:0}) {
     let title = data.title;
     let content = data.content;
-    let color = data.textColor;
+    let color = data.textColor ? data.textColor : data.color;
     let time = data.time;
     let body = document.getElementsByTagName('body')[0];
     let div = document.createElement('div');

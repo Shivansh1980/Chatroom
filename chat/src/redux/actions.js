@@ -16,12 +16,7 @@ export const updateError = (error) => {
         payload: error
     }
 }
-export const updateUser2_id = (user2_id) => {
-    return {
-        type: 'UpdateUser2_id',
-        payload: user2_id
-    }
-}
+
 export const updateCurrentRoom = (room) => {
     return {
         type: 'UpdateCurrentRoom',

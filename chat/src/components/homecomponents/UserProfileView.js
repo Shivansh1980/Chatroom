@@ -5,9 +5,11 @@ import { BsPlus } from 'react-icons/bs'
 import { ApiRequester } from '../../utils/utils'
 import store from '../../redux/store'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { show_info } from '../../styles/AlterCSS'
+import { show_info } from '../../styles/js/AlterCSS'
 import * as Actions from '../../redux/actions'
-import {api_url} from '../../global'
+import { api_url } from '../../global'
+import CreateRoomView from '../popup/CreateRoomView'
+
 function UpdateProfileView(props) {
     let user = props.user;
     let self = props.self;
@@ -38,6 +40,7 @@ function UpdateProfileView(props) {
                         textColor:'green'
                     })
                     dispatch(Actions.updateUser(res.data.user));
+                    removeSelf(e);
                 }
                 else {
                     show_info({
@@ -60,6 +63,12 @@ function UpdateProfileView(props) {
         ReactDOM.unmountComponentAtNode(self);
         self.remove();
     }
+
+    function logout(e) {
+        localStorage.removeItem('username');
+        localStorage.removeItem('password');
+        window.location.reload();
+    }
     
     useEffect(() => {
         let data = store.getState().userData;
@@ -75,7 +84,8 @@ function UpdateProfileView(props) {
             </div>
             <div className="update_profile__header">
                 <img src={user.pic ? api_url+user.pic : 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png'} />
-                <h3>{user.name}</h3>
+                <h3 align="center">{user.name}</h3>
+                <button className="update_profile__header_button" onClick={ logout }>Logout</button>
             </div>
             <form className="update_profile__form" onSubmit={updateProfile}>
                 <input id={"user_name_input" + user.id} placeholder="Enter new name..." name="username" value={name} onChange={(e) => setName(e.target.value)}/>
@@ -98,13 +108,22 @@ export default function UserProfileView(props) {
         ReactDOM.render(
             <Provider store={store}>
                 <UpdateProfileView self={div} user={user} />
-            </Provider>,
-            div);
+            </Provider>, div
+        );
         div.classList.add('update_profile_container');
     }
-    useEffect(() => {
-        
-    }, [])
+    function handleCreateRoom(e) {
+        let div = document.createElement('div');
+        div.id = 'create_roomm_' + user.id;
+        div.classList.add('absolute_center');
+        document.body.appendChild(div);
+        ReactDOM.render(
+            <Provider store={store}>
+                <CreateRoomView self={div} user={user} />
+            </Provider>, div
+        );
+        div.classList.add('create_room_container');
+    }
 
     if (!user) {
         return (
@@ -114,10 +133,10 @@ export default function UserProfileView(props) {
     return (
         <div className="user_profile_container">
             <div className="user_profile__image" onClick={handleOpen}>
-                <img id={'user_image_' + user.id} src={user.pic ? api_url+user.pic : 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png'} />
+                <img id={'user_image_' + user.id} src={user.pic != null && user.pic != '' ? api_url+user.pic : 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png'} />
             </div>
             <p className="user_profile__p">{user.name}</p>
-            <div className="user_profile__adduser">
+            <div className="user_profile__addroom" onClick={handleCreateRoom}>
                 <BsPlus size={ 20 }/>
             </div>
 

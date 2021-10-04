@@ -1,5 +1,4 @@
 import $ from 'jquery'
-import Push from 'push.js'
 import { google_icon } from './Icons'
 var color_the_message = false;
 
@@ -223,29 +222,3 @@ export function copyToClipboard(element) {
     document.execCommand("copy");
 }
 
-export function take_notification_permissions() {
-    if (!Notification) {
-        alert('Desktop Notification not available in your browser');
-        return;
-    }
-    if (Notification.permission != 'granted') {
-        Notification.requestPermission();
-        Push.Permission.get();
-    }
-}
-
-export function showNotification(username, roomname, message) {
-    if (Notification.permission != 'granted')
-        Notification.requestPermission();
-    else {
-        var notification = new Notification(`Awesome Chatroom:\n${roomname}<--${username}`, {
-            body: message,
-            icon: 'https://i.pinimg.com/originals/87/68/a6/8768a6b1df27243034f123988cfdb9d1.jpg'
-        });
-
-        notification.onclick = () => {
-            notification.close();
-            window.parent.focus();
-        }
-    }
-}

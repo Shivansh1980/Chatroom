@@ -1,13 +1,14 @@
 import React from 'react'
-import QuestionBox from './components/QuestionBox'
 import Login from './components/Login'
 import Signup from './components/Signup'
-import './App.css';
+import './styles/css/App.css'
+import './styles/css/Android.css'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import store from './redux/store';
 import { Provider } from 'react-redux';
 
 function App() {
+  
   return (
     <>
       <Provider store={store}>

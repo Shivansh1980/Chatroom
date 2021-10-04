@@ -1,55 +1,14 @@
 import axios from 'axios';
-import { hide_progress_box } from "../styles/AlterCSS";
 import { api_url, hostname, ws_protocol } from '../global'
+import {getCookie} from './ChatMessage'
+import Push from 'push.js'
+import $ from 'jquery';
 
-export class ApiRequester{
-    constructor(username, password) {
-        this.username = username;
-        this.password = password;
-        this.method = null;
-        this.data = {};
-        this.headers = { 'Content-Type': 'application/json' };
-    }
-    
-    setData(data) {
-        this.data = data;
-    }
-    setMethod(method) {
-        this.method = method;
-    }
-    setHeaders(headers) {
-        this.headers = headers;
-    }
-    makeRequest(url) {
-        const ref = this;
-        if (ref.method && url && ref.username && ref.password) {
+// < ---------------------------- functions implementations ---------------------------------->
 
-            return new Promise(function (resolve, reject) {
-                axios({
-                    method: ref.method,
-                    url: api_url+url,
-                    headers: ref.headers,
-                    data: ref.data,
-                    auth: {
-                        username: ref.username,
-                        password: ref.password
-                    }
-                }).then((response) => {
-                    resolve(response);
-                }).catch((error) => {
-                    reject(error);
-                });
-            })
-        }
-        else {
-            return new Promise((resolve, reject) => {
-                reject('method, url, data, username and password required')
-            });
-        }
-    }
-}
 
 export function toDataURL(file, callback) {
+
     var reader = new FileReader();
     reader.onload = function () {
         var dataURL = reader.result;
@@ -68,6 +27,174 @@ export function dataUrlToFile(dataurl, filename) {
         u8arr[n] = bstr.charCodeAt(n);
     }
     return new File([u8arr], filename, { type: mime });
+}
+
+export function convertToBase64(blobFile, callback) {
+    var fileToLoad = blobFile;
+    var fileReader = new FileReader();
+    fileReader.onload = function (fileLoadedEvent) {
+        let base64 = fileLoadedEvent.target.result;
+        callback(base64);
+    };
+    fileReader.readAsDataURL(fileToLoad);
+}
+
+export function checkIfImageExists(url, callback) {
+    const img = new Image();
+
+    img.src = url;
+
+    if (img.complete) {
+        callback(true);
+    } else {
+        img.onload = () => {
+            callback(true);
+        };
+
+        img.onerror = () => {
+            callback(false);
+        };
+    }
+}
+
+export function take_notification_permissions() {
+    if (!Notification) {
+        alert('Desktop Notification not available in your browser');
+        return;
+    }
+    if (Notification.permission != 'granted') {
+        Notification.requestPermission();
+        Push.Permission.get();
+    }
+}
+
+export function showNotification(username, roomname, message) {
+    if (Notification.permission != 'granted')
+        Notification.requestPermission();
+    else {
+        var notification = new Notification(`Awesome Chatroom:\n${roomname}<--${username}`, {
+            body: message,
+            icon: 'https://i.pinimg.com/originals/87/68/a6/8768a6b1df27243034f123988cfdb9d1.jpg'
+        });
+
+        notification.onclick = () => {
+            notification.close();
+            window.parent.focus();
+        }
+    }
+}
+
+export async function makeDropZone(containerId, fileInputId, callback) {
+    // let container = dropzone.current.parentNode;
+
+    let container = document.getElementById(containerId);
+    let fileInputRef = document.getElementById(fileInputId);
+    $(container).off();
+
+    $(container).on('dragover', e => {
+        e.preventDefault(); // to stop the default behavior
+        container.classList.add('dropzone__over');
+    })
+
+
+    let dragoutListeners = ['dragleave', 'dragend'];
+    dragoutListeners.forEach(type => {
+        $(container).on((type), e => {
+            container.classList.remove('dropzone__over');
+        })
+    })
+
+    $(container).on('drop', e => {
+        e.preventDefault();
+        let files = e.originalEvent.dataTransfer.files;
+        if (files.length && fileInputRef) {
+            fileInputRef.files = files;
+            console.log(container,fileInputRef,files);
+            callback(container, files[0]);
+        }
+        container.classList.remove('dropzone__over');
+    })
+}
+
+export function loadImage(src, callback) {
+    var image = new Image();
+    image.onload = function () {
+        callback(src);
+    }
+    image.src = src;
+}
+
+export function loadImages(srcs, callback) {
+    let length = srcs.length;
+    let remaining = srcs.length;
+    for (let i = 0; i < length; i++) {
+        let src = srcs[i];
+        let image = new Image();
+        image.onload = function () {
+            remaining--;
+            if (remaining === 0) {
+                callback(srcs);
+            }
+        }
+        image.src = src
+    }
+}
+
+
+// < ---------------------- Classes Implementations --------------------->
+
+export class ApiRequester{
+    constructor(username, password) {
+        this.username = username;
+        this.password = password;
+        this.method = null;
+        this.data = {};
+        this.body = {};
+        this.headers = { 'Content-Type': 'application/json', 'x-csrftoken': getCookie('csrftoken')};
+    }
+    
+    setData(data) {
+        this.data = data;
+    }
+    setBody(body) {
+        this.body = body;
+    }
+    setMethod(method) {
+        this.method = method;
+    }
+    setHeaders(headers) {
+        this.headers = headers;
+    }
+    
+    makeRequest(url) {
+        const ref = this;
+        if (ref.method && url && ref.username && ref.password) {
+
+            return new Promise(function (resolve, reject) {
+                axios({
+                    method: ref.method,
+                    url: api_url+url,
+                    headers: ref.headers,
+                    data: ref.data,
+                    auth: {
+                        username: ref.username,
+                        password: ref.password
+                    },
+                    body: ref.body
+                    
+                }).then((response) => {
+                    resolve(response);
+                }).catch((error) => {
+                    reject(error);
+                });
+            })
+        }
+        else {
+            return new Promise((resolve, reject) => {
+                reject('method, url, data, username and password required')
+            });
+        }
+    }
 }
 
 export class MessageWebApi {
@@ -93,20 +220,37 @@ export class MessageWebApi {
         }
     }
 
-    send_file_to_group(file, description) {
+    send_file_to_group(file, description, callback) {
         const client = this.client;
         var username = this.username
         var roomname = this.roomname
-        toDataURL(file[0], function (dataURL) {
-            client.send(JSON.stringify({
-                'command': 'new_file',
-                'dataURL': dataURL,
-                'description': description,
-                'username': username,
-                'roomname': roomname,
-                'id': Date.now().toString(),
-            }));
-        })
+        if (file.name.endsWith('.pdf') || file.name.endsWith('.PDF')) {
+            convertToBase64(file, function (base64) {
+                client.send(JSON.stringify({
+                    'command': 'new_file',
+                    'filename': file.name,
+                    'dataURL': base64,
+                    'username': username,
+                    'roomname': roomname,
+                    'id': Date.now().toString(),
+                }))
+                callback(true);
+            })
+        }
+        else {
+            toDataURL(file, function (dataURL) {
+                client.send(JSON.stringify({
+                    'command': 'new_file',
+                    'filename': file.name,
+                    'dataURL': dataURL,
+                    'description': description,
+                    'username': username,
+                    'roomname': roomname,
+                    'id': Date.now().toString(),
+                }));
+                callback(true);
+            })
+        }
     }
 
     async update_active_users() {
@@ -121,8 +265,10 @@ export class MessageWebApi {
                 callback(Math.round(packet.progress * 100))
             })
             .then(function (result) {
-                hide_progress_box();
                 ref.send_message_to_room("new_message", result.text);
+                output(true);
+            }).catch(function (err) {
+                output(false);
             });
     }
 
@@ -160,10 +306,10 @@ export class MessageWebApi {
         return cookieValue;
     }
 
-
     get_client() {
         return this.client;
     }
+    
     get_messages() {
         return this.messages;
     }
@@ -225,5 +371,8 @@ export class MessageWebApi {
 
     get_ws_protocol() {
         return this.ws_protocol;
+    }
+    close_connection() {
+        this.client.close();
     }
 }
