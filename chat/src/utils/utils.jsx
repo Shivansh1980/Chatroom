@@ -201,6 +201,7 @@ export class MessageWebApi {
     ws_protocol = ws_protocol
     hostname = hostname
 
+    //roomname => room_id or group_id based upon the situtation it handles that.
     constructor(client) {
         this.api_url = api_url + '/';
         this.client = client;
@@ -208,6 +209,15 @@ export class MessageWebApi {
         this.roomname = null
         this.user = null;
         this.active_users = [];
+        this.is_group = false;
+    }
+
+    set_is_group(is_group) {
+        this.is_group = is_group;
+    }
+
+    is_group() {
+        return this.is_group;
     }
 
     fetch_messages() {
@@ -220,34 +230,42 @@ export class MessageWebApi {
         }
     }
 
+    update_message(data = { command: 'update_message', 'current_message': null, 'updated_message': null, 'id': null, 'username': null, 'roomname': null }) {
+        if (this.is_group == true) {
+            data['group_id'] = this.roomname;
+        }
+        this.client.send(JSON.stringify(data));
+    }
+
     send_file_to_group(file, description, callback) {
         const client = this.client;
         var username = this.username
         var roomname = this.roomname
+
+        let file_data = {
+            'command': 'new_file',
+            'filename': file.name,
+            'username': username,
+            'roomname': roomname,
+            'id': Date.now().toString(),
+        };
+
+        if (this.is_group) file_data['group_id'] = this.roomname;
+
         if (file.name.endsWith('.pdf') || file.name.endsWith('.PDF')) {
             convertToBase64(file, function (base64) {
-                client.send(JSON.stringify({
-                    'command': 'new_file',
-                    'filename': file.name,
-                    'dataURL': base64,
-                    'username': username,
-                    'roomname': roomname,
-                    'id': Date.now().toString(),
-                }))
+                file_data['dataURL'] = base64
+                client.send(JSON.stringify(file_data));
+                console.log(file_data);
                 callback(true);
-            })
+            });
         }
         else {
+            file_data['description'] = description;
             toDataURL(file, function (dataURL) {
-                client.send(JSON.stringify({
-                    'command': 'new_file',
-                    'filename': file.name,
-                    'dataURL': dataURL,
-                    'description': description,
-                    'username': username,
-                    'roomname': roomname,
-                    'id': Date.now().toString(),
-                }));
+                file_data['dataURL'] = dataURL;
+                client.send(JSON.stringify(file_data));
+                console.log(file_data);
                 callback(true);
             })
         }
@@ -273,12 +291,26 @@ export class MessageWebApi {
     }
 
     send_message_to_room(command, message) {
+        if (this.is_group == true) this.send_message_to_group(command, message);
+            
+        else {
+            this.client.send(JSON.stringify({
+                'command': command,
+                'message': message,
+                'username': this.username,
+                'roomname': this.roomname
+            }));
+        }
+    }
+
+    send_message_to_group(command, message) {
         this.client.send(JSON.stringify({
             'command': command,
             'message': message,
             'username': this.username,
-            'roomname': this.roomname
-        }));
+            'roomname': this.roomname,
+            'group_id': this.roomname,
+        }))
     }
 
     clear_room_messages(password) {

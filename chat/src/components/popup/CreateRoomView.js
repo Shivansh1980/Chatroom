@@ -89,9 +89,8 @@ export default function CreateRoomView(props) {
         e.preventDefault();
     }
 
-    function searchUser(e) {
+    useEffect(() => {
         setLoading(true);
-        setSearchedUsername(e.target.value);
         let api = new ApiRequester(userData.username, userData.password);
         api.setMethod('POST')
         api.setData({ 'username': searchedUsername })
@@ -102,22 +101,7 @@ export default function CreateRoomView(props) {
         }).catch((error) => {
             setLoading(false);
         })
-        
-    }
-    useEffect(() => {
-        setLoading(true);
-        let api = new ApiRequester(userData.username, userData.password);
-        api.setMethod('post');
-        api.makeRequest('/api/chat/command/get_users/').then((response) => {
-            let users = response.data.data;
-            let views = get_user_views(users);
-            setLoading(false);
-            setUserViews(views);
-        }).catch((error) => {
-            setLoading(false);
-        })
-        
-    }, []);
+    }, [searchedUsername]);
 
     function removeSelf(e) {
         root.classList.remove('blur');
@@ -134,7 +118,7 @@ export default function CreateRoomView(props) {
             {!roomForm ?
                 <div>
                     <div className="user_search_container">
-                        <input id="user_search__input" type="text" placeholder="Search for users.." value={searchedUsername} onChange={(e) => { searchUser(e); setSearchedUsername(e.target.value); }} />
+                        <input id="user_search__input" type="text" placeholder="Search for users.." value={searchedUsername} onChange={(e) => { setSearchedUsername(e.target.value); }} />
                     </div>
                     {loading ?
                         <div className="flex_center_row">

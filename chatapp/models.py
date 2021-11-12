@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from Chatroom import settings
@@ -22,6 +23,12 @@ class Room(models.Model):
     def __str__(self):
         return str(self.id) + '->' + str(self.room_name)
 
+class ChatGroup(models.Model):
+    id = models.AutoField(primary_key=True)
+    group_name = models.CharField(max_length=50)
+    image = models.ImageField(blank=True, null=True)
+    admin = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="admin")
+    users = models.ManyToManyField(UserProfile, related_name='chatgroup')
 
 class Message(models.Model):
     id       = models.AutoField(primary_key=True)
@@ -29,10 +36,18 @@ class Message(models.Model):
     message  = models.TextField()
     file     = models.FileField(blank=True, null=True)
     timestamp= models.DateTimeField(auto_now_add=True)
-    room     = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room     = models.ForeignKey(Room, related_name='room', on_delete=models.CASCADE, blank=True, null=True)
+    group    = models.ForeignKey(ChatGroup, related_name='chatgroup', on_delete=models.CASCADE, default=None, blank=True, null=True)
     isanswer = models.BooleanField(default=False)
     isfile   = models.BooleanField(default=False)
     type     = models.CharField(max_length=40, default='text', blank=True, null=True)
+
+    def clean(self):
+        cleaned_data = super().clean
+        if not cleaned_data.get('room') and not cleaned_data.get('group'):
+            raise ValidationError({
+                'room':'One of the Two Field Group or Room Must be Filled'
+            })
 
     def __str__(self):
         return self.user.name + ' -> ' + self.message
@@ -40,10 +55,6 @@ class Message(models.Model):
     def last_40_messages():
         return Message.objects.order_by('timestamp').all()[:40]
 
-class ChatGroup(models.Model):
-    id = models.AutoField(primary_key=True)
-    group_name = models.CharField(max_length=50)
-    users = models.ManyToManyField(UserProfile, related_name='chatgroup')
 
 class MoodleAuthentication(models.Model):
     name = models.CharField(max_length=50)

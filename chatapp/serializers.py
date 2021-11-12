@@ -17,7 +17,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ('id', 'pic', 'name', 'user')
-    
+
+class ChatGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatGroup
+        fields = '__all__'
 
 class MessageSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer(many=False, read_only=True)

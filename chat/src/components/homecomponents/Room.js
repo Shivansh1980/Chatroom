@@ -22,30 +22,43 @@ export default function Room(props) {
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState(false);
     const [messageApi, setMessageApi] = useState(null);
-    const [isDropzonReady, setIsDropzonReady] = useState(false);
 
     let messageBoxRef = useRef(null);
-
-    //if this will be loading then that means websocket is in connecting state
-
     var message_api, webmessage, client;
 
-    async function updateWebsocketState(room_id) {
+    async function updateWebsocketState(room_id, group = false) {
         return new Promise((resolve, reject) => {
             if (messageApi) messageApi.close_connection();
-            client = new WebSocket(
-                websocket_url
-                + '/'
-                + room_id
-                + '/?'
-                + `username=${userData.username}&password=${userData.password}`
-            )
+
+            if (group == true) {
+                client = new WebSocket(
+                    websocket_url
+                    + 'group'
+                    + '/'
+                    + room_id
+                    + '/?'
+                    + `username=${userData.username}&password=${userData.password}`
+                )
+            }
+            else {
+                client = new WebSocket(
+                    websocket_url
+                    + 'chat'
+                    + '/'
+                    + room_id
+                    + '/?'
+                    + `username=${userData.username}&password=${userData.password}`
+                )
+            }
             client.onopen = () => {
                 message_api = new MessageWebApi(client);
                 message_api.set_username(userData.username);
                 message_api.set_password(userData.password);
                 message_api.set_roomname(room_id);
                 message_api.set_user(userData.user);
+                if (group == true) {
+                    message_api.set_is_group(true);
+                }
                 webmessage = new WebMessageHandler(message_api);
                 webmessage.handle_message("message_box");
                 resolve(message_api);
@@ -65,8 +78,14 @@ export default function Room(props) {
             if (new_room != room) {
                 setLoading(true);
                 //new_room = room_1 ==> we have to take substring
-                let room_id = new_room.substring(5, new_room.length);
-                updateWebsocketState(room_id).then((message_api) => {
+                let id, is_group = false;
+                if (new_room.startsWith('room_')) id = new_room.substring(5, new_room.length);
+                if (new_room.startsWith('group_')) {
+                    id = new_room.substring(6, new_room.length);
+                    is_group = true;
+                }
+                
+                updateWebsocketState(id, is_group).then((message_api) => {
                     setMessageApi(message_api);
                     setRoom(new_room);
                     setLoading(false);
@@ -113,7 +132,7 @@ export default function Room(props) {
     else if (!selected && !loading) {
         return (
             <>
-                <div className="roomcontainer__room__messagebox flex_center_row">
+                <div className="roomcontainer__room__messagebox flex_center_column">
                     <h1 align="center" style={{ color: 'white' }}>Please Select Any Room To Connect.</h1>
                 </div>
                 <div className="roomcontainer__room__inputs">

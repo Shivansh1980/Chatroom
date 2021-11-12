@@ -3,3 +3,4 @@ from .models import *
 admin.site.register(UserProfile)
 admin.site.register(Message)
 admin.site.register(Room)
+admin.site.register(ChatGroup)

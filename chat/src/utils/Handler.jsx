@@ -4,8 +4,8 @@ import { showNotification } from './utils';
 import { hide_loading_screen, display_questions_box_items_at_start } from '../styles/js/AlterCSS'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-import ImageContainer from '../components/minicomponents/ImageContainer'
-import FileContainer from '../components/minicomponents/FileContainer'
+import ImageContainer from '../components/containers/ImageContainer'
+import FileContainer from '../components/containers/FileContainer'
 import { show_info } from '../styles/js/AlterCSS'
 
 export class WebMessageHandler {
@@ -16,6 +16,7 @@ export class WebMessageHandler {
         this.roomname = message_api.get_roomname();
         this.user = message_api.get_user();
     }
+    
     handle_message(selector) {
         
         this.client.onmessage = (e) => {
@@ -110,7 +111,7 @@ export class WebMessageHandler {
             else if (data.type == 'image_answer') {
                 $('#' + data.id).parent().append(`<p> ${data.message} </p>`);
             }
-            chat.addEvents(this.client, this.username, this.roomname);
+            chat.addEvents(this.message_api, this.username, this.roomname);
         }
     }
 }

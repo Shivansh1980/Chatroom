@@ -71,6 +71,7 @@ class ChatApi(APIView):
     def post(self, request, command=None):
         data = RequestParser(request)
 
+
         if command is None:
             Response({'status':False,'error':'command is required in body or form-data'})
 
@@ -110,6 +111,27 @@ class ChatApi(APIView):
             except Exception as e:
                 return Response({'status':False,'error':str(e)})
 
+        elif command == 'create_group':
+            user_list = data.get('user_list')
+            if(user_list is None or len(user_list) == 0):
+                user_list = [userprofile.id]
+            response = room_controller.create_group(userlist=user_list, group_name=data.get('group_name'), group_image=data.get_file('group_image'))
+            return Response(response)
+
+        elif command == "get_users_by_group_id":
+            group_id = data.get('group_id')
+            return Response(room_controller.get_users_by_group_id(group_id=group_id))
+
+        elif command == 'add_users_to_group':
+            users = data.get('users')
+            group_id = data.get('group_id')
+            return Response(room_controller.add_user_to_group(users=users, group_id=group_id))
+
+        elif command == 'remove_users_from_group':
+            users = data.get('users')
+            group_id = data.get('group_id')
+            return Response(room_controller.remove_users_from_group(users=users, group_id=group_id))
+
         elif command == 'get_saved_rooms':
             response = room_controller.get_saved_rooms(userprofile=userprofile)
             return Response(response)
@@ -135,6 +157,7 @@ class ChatApi(APIView):
             userprofiles = UserProfile.objects.all()
             serializer = UserProfileSerializer(userprofiles, many=True)
             return Response({'status': True, 'data': serializer.data})
+
 
 @api_view(['POST'])
 def search_user(request):

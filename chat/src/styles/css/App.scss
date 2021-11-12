@@ -211,7 +211,6 @@ label{
   background-color:black;
   color:white;
 }
-
 /*CSS FOR IMAGE VIEW AND CONTAINERS*/
 
 /*This is when user click on image*/
@@ -241,12 +240,12 @@ label{
   top:50%;
   left:50%;
   transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
 }
 .show_scaled_image > img {
-  min-width: 550px;
-  min-height: 550px;
-  max-width:700px;
-  max-height: 650px;
+  width: 100%;
+  height: 100%;
 }
 
 /*Whoever classList contains this class will be blur*/
@@ -291,7 +290,7 @@ label{
 
 /* <----------------------- Top LEVEL DIVS ----------------------> */
 
-.roomcard{
+.roomcard {
   display: flex;
   animation:bounceInDown 2s;
   flex-wrap: wrap;
@@ -306,18 +305,29 @@ label{
   width:100%;
   overflow: hidden;
   border-radius:5px;
-}
 
-.roomcard:hover{
-  background-color: lightgreen;
-  color:black;
-  cursor:pointer;
-}
-.roomcard__image{
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  margin:5px;
+  &:hover {
+    background-color: lightgreen;
+    color:black;
+    cursor:pointer;
+  }
+
+  & img {
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    margin:5px;
+  }
+  & button {
+    background-color:white;
+    border-radius:50%;
+    color:black;
+  }
+  & button:hover {
+    background-color:black;
+    color:white;
+    cursor: pointer;
+  }
 }
 
 .roomcontainer{
@@ -418,12 +428,25 @@ label{
   box-shadow: 0 0 30px black;
 }
 .user_search_container{
+  display: grid;
   margin: 5px 0px;
-}
-.user_search_container > input{
-  height: 35px;
-  font-size:25px;
-  padding:5px;
+
+  & input {
+    height: 35px;
+    font-size:25px;
+    padding:5px;
+  }
+  & button {
+    font-size:20px;
+    background-color:white;
+    color: black;
+    padding:5px;
+  }
+  & button:hover {
+    background-color:black;
+    color:white;
+    cursor:pointer;
+  }
 }
 .user_search__list{
   width: 100%;
@@ -749,17 +772,24 @@ label{
   color:black;
 }
 
+.lightblue {
+  background-color:lightblue;
+}
+
+.black {
+  background-color:black;
+}
+
+.white {
+  background-color:white;
+}
+
 /* ---------------------Positioning Elements ------------------------ */
 
 .hide {
   display: none;
 }
 .absolute_center{
-  display:flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position :absolute;
   top: 50%;
   left: 50%;
@@ -818,4 +848,36 @@ label{
 .background_image_loading{
   background: url('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-2.gif');
   z-index:3;
+}
+
+.user_list_container {
+  z-index: 1;
+  background-color:black;
+  width: 70%;
+}
+
+.group_card_conntainer {
+  margin-left:10px;
+}
+
+.group_action_button_container {
+  margin-left:auto;
+  margin-right:10px;
+}
+.group_action_button {
+  margin: 1px;
+  margin-left:auto;
+  margin-right:10px;
+  background-color:black;
+  color:white;
+  padding:5px;
+  font-size:15px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+
+  &:hover {
+    background-color: white;
+    color: black;
+  }
 }

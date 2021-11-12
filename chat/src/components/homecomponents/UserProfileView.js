@@ -9,6 +9,7 @@ import { show_info } from '../../styles/js/AlterCSS'
 import * as Actions from '../../redux/actions'
 import { api_url } from '../../global'
 import CreateRoomView from '../popup/CreateRoomView'
+import {CircularProgress} from '@material-ui/core'
 
 function UpdateProfileView(props) {
     let user = props.user;
@@ -16,6 +17,7 @@ function UpdateProfileView(props) {
     let root = document.getElementById('root');
 
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -23,6 +25,7 @@ function UpdateProfileView(props) {
     const [pic, setPic] = useState(null);
 
     function updateProfile(e) {
+        setLoading(true);
         if (name || pic) {
             let formData = new FormData();
             formData.append('newname', name);
@@ -50,6 +53,7 @@ function UpdateProfileView(props) {
                         textColor:'red'
                     })
                 }
+                setLoading(false);
             });
         }
         else {
@@ -93,6 +97,13 @@ function UpdateProfileView(props) {
                 <input id={"user_pic_input" + user.id} type="file" name="picture" onChange={(e) => setPic(e.target.files[0]) }/>
                 <input type="submit" value="Update" />
             </form>
+            {loading ?
+                <div className="flex_center_row">
+                    <CircularProgress size={50} />
+                </div>
+                :
+                null
+            }
         </>
     )
 }
@@ -112,6 +123,7 @@ export default function UserProfileView(props) {
         );
         div.classList.add('update_profile_container');
     }
+    
     function handleCreateRoom(e) {
         let div = document.createElement('div');
         div.id = 'create_roomm_' + user.id;

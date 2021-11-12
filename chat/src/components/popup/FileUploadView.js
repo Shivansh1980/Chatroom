@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import '../../styles/css/popup.css'
 import { LinearProgress } from "@material-ui/core"
-import {show_info} from '../../styles/js/AlterCSS'
+import { show_info } from '../../styles/js/AlterCSS'
+import Photoshop from '../containers/Photoshop'
 
 function FileUploadView(props) {
     let root = document.getElementById('root');
@@ -20,13 +21,16 @@ function FileUploadView(props) {
         self.remove();
     }
 
+    function is_image_file() {
+        if (file.type.startsWith('image')) return true;
+        else return false;
+    }
+
     function send_image_text() {
-        console.log('your prop data : ', file, message_api);
         setLoading(true);
         message_api.send_image_text(file, function (progress_value) {
             setProgress(progress_value);
         }, function (status) {
-            console.log(status);
             if (status === true) {
                 show_info({
                     title: 'Image',
@@ -50,8 +54,9 @@ function FileUploadView(props) {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        let to_text = e.target.ct.checked;
-        let direct_upload = e.target.du.checked;
+        let to_text, direct_upload;
+        if(is_image_file()) to_text = e.target.ct.checked;
+        direct_upload = e.target.du.checked;
         if (to_text && direct_upload) {
             alert("you can't tick both");
             return;
@@ -78,6 +83,12 @@ function FileUploadView(props) {
             return;
         }
     }
+    function openPhotoshop() {
+        ReactDOM.unmountComponentAtNode(self);
+        self.classList.remove('popup_file__container');
+        self.classList.add('photoshop');
+        ReactDOM.render(<Photoshop image={file} messageApi={message_api} self={self}/>, self);
+    }
     if (!loading) {
         return (
             <>
@@ -87,15 +98,27 @@ function FileUploadView(props) {
                 </div>
                 <div className="popup_file__main">
                     <form className="popup_file__form" onSubmit={handleSubmit}>
-                        <div>
-                            <input id="convert_to_text" name="ct" type="checkbox" />
-                            <label htmlFor="convert_to_text">Convert To Text</label>
-                        </div>
+                        {
+                            is_image_file() ? 
+                            <div>
+                                <input id="convert_to_text" name="ct" type="checkbox" />
+                                <label htmlFor="convert_to_text">Convert To Text</label>
+                            </div>
+                            :
+                            null
+                        }
                         <div>
                             <input id="direct_upload" name="du" type="checkbox" />
                             <label htmlFor="direct_upload">Direct Upload</label>
                         </div>
-                        <input type="submit" />
+                        <input type="submit" value='Upload' />
+
+                        { is_image_file() ?
+                            < input type="button" value="Open Photoshop" onClick={openPhotoshop} />
+                            :
+                            null
+                        }
+                        <input type="button" value="cancel" onClick={removeSelf}/>
                     </form>
                 </div>
             </>

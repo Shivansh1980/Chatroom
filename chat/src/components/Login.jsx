@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import Home from './Home'
 import { CircularProgress } from '@material-ui/core';
 import axios from 'axios';
-import { CustomBox } from './minicomponents/CustomBox'
+import { CustomBox } from './containers/CustomBox'
 import {Link} from 'react-router-dom'
 import { api_url } from '../global'
 import { getCookie } from '../utils/ChatMessage'
 import { loadImage } from '../utils/utils'
-import { show_info } from '../styles/js/AlterCSS'
 
 export class Login extends React.Component {
     state = {

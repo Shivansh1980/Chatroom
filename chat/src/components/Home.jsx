@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react'
 import {ApiRequester} from '../utils/utils'
 import { useSelector, useDispatch, connect } from 'react-redux';
-import { CustomBox } from './minicomponents/CustomBox'
+import { CustomBox } from './containers/CustomBox'
 import RoomNavigation from './homecomponents/RoomNavigation'
 import Room from './homecomponents/Room'
 import { useMediaQuery } from 'react-responsive';
 import * as Actions from '../redux/actions'
 import { BiMenu } from 'react-icons/bi'
 
+//rooms => Private Chats
+//ChatGroup => Groups
 
 function Home(props) {
     let username = props.username;
@@ -22,11 +24,9 @@ function Home(props) {
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 600px)' })
     
     useEffect(() => {
-
         dispatch({type: 'UpdateLoading',payload: true})
         dispatch(Actions.updateUsername(username));
         dispatch(Actions.updatePassword(password));
-
         api.setMethod('post');
         api.makeRequest('/api/chat/command/get_saved_rooms/').then((response) => {
             let res = response.data;
@@ -44,9 +44,7 @@ function Home(props) {
             dispatch(Actions.updateError(error.message));
         });
         api.setMethod('get');
-        api.makeRequest('/api/chat/user/').then((response) => {
-            dispatch(Actions.updateUser(response.data));
-        });
+        api.makeRequest('/api/chat/user/').then(response => dispatch(Actions.updateUser(response.data)) );
     }, []);
     useEffect(() => {
         if (roomState.currentRoom) {
@@ -60,6 +58,8 @@ function Home(props) {
     }
 
     let header = null;
+    // If the screen is not tablet or phone that means its a PC and since its a pc so no need of drawer. Otherwise Drawer
+    // is required.
     if (!isTabletOrMobile) {
         header = <div id="room_navigation" className="roomcontainer__list layout">
             <RoomNavigation/>
@@ -74,12 +74,13 @@ function Home(props) {
             header = null
     }
     
+    // This loading will be true when the saved rooms being fetched from the server.
+    // so from any where if you are updating the rooms you can keep this loading on.
     let loading = state.loading;
     if (loading == false) {
         return (
             <>
                 <div className="roomcontainer">
-                    
                     {header}
                     <div className="roomcontainer__room layout">
                         <div className="roomheader">

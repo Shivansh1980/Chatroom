@@ -34,7 +34,7 @@ export function loadAllMessages(data) {
     let messages = data.messages;
     let currentUser = data.currentUser;
     let currentRoom = data.currentRoom;
-
+    console.log(messages);
     let msgbox = document.getElementById(selector);
 
     if (msgbox) {
@@ -158,7 +158,8 @@ export function appendMessageRight(selector, message, username, id=null) {
 
 // Adding the required events
 
-export function addEvents(client, username, roomname) {
+export function addEvents(message_api, username, roomname) {
+    let client = message_api.get_client();
     $('.right_message').unbind("contextmenu").bind("contextmenu", function (e) {
         copyToClipboard(this);
         window.confirm("Copied Successfully")
@@ -177,14 +178,16 @@ export function addEvents(client, username, roomname) {
         else {
             var updated_message = this.innerText + '\nAnswer: ' + answer;
             var current_message = this.innerText;
-            client.send(JSON.stringify({
-                'command': 'update_message',
-                'current_message': current_message,
-                'updated_message': updated_message,
-                'id':this.id,
-                'username': username,
-                'roomname': roomname
-            }));
+            message_api.update_message(
+                {
+                    'command': 'update_message',
+                    'current_message': current_message,
+                    'updated_message': updated_message,
+                    'id': this.id,
+                    'username': username,
+                    'roomname': roomname
+                }
+            );
         }
 
     })
@@ -197,14 +200,16 @@ export function addEvents(client, username, roomname) {
         var updated_message = this.innerText +'\nAnswer: ' + answer;
         var current_message = this.innerText;
 
-        client.send(JSON.stringify({
-            'command': 'update_message',
-            'current_message': current_message,
-            'updated_message': updated_message,
-            'id': this.id,
-            'username': username,
-            'roomname': roomname
-        }));
+        message_api.update_message(
+            {
+                'command': 'update_message',
+                'current_message': current_message,
+                'updated_message': updated_message,
+                'id': this.id,
+                'username': username,
+                'roomname': roomname
+            }
+        );
     })
     $('.google_search_button').unbind("click").bind("click", function (e) {
         var text = e.target.value

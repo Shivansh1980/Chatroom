@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import $ from 'jquery'
 import { BiError } from 'react-icons/bi'
 import { CircularProgress } from '@material-ui/core'
 

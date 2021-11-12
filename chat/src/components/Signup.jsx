@@ -1,10 +1,9 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { CustomBox } from './minicomponents/CustomBox'
+import { CustomBox } from './containers/CustomBox'
 import { api_url } from '../global'
 import { CircularProgress } from '@material-ui/core'
-import { getCookie } from '../utils/ChatMessage'
 import {show_info} from '../styles/js/AlterCSS'
 
 export default function Signup() {

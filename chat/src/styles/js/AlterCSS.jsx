@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {CustomBox} from '../../components/minicomponents/CustomBox'
+import {CustomBox} from '../../components/containers/CustomBox'
 
 export function show_image_to_text_box() {
     $(".image_to_text_box").css({

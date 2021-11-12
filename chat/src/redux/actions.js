@@ -4,7 +4,18 @@ export const updateLoading = (loading) => {
         payload: loading
     }
 }
-export const updateRooms = (rooms) => {
+export const updateRooms = (groups_and_rooms) => {
+    let rooms_data = groups_and_rooms.rooms_data;
+    let groups_data = groups_and_rooms.groups_data;
+    let rooms = [];
+    groups_data.map(group => {
+        group['is_group'] = true;
+        rooms.push(group);
+    });
+    rooms_data.map(room => {
+        room['is_group'] = false;
+        rooms.push(room);
+    });
     return {
         type: 'UpdateRooms',
         payload: rooms
