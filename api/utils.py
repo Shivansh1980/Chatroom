@@ -1,4 +1,4 @@
-from djangochat.models import Message
+from chatapp.models import Message
 from django.db import connection
 import itertools
 import json
@@ -35,13 +35,22 @@ class SQL:
 
 class RequestParser:
     def __init__(self, request):
-        data = request.body
+        data = {}
         files = request.FILES
+        
 
         try:
-            data = json.loads(data)
+            data = request.data
+        except:
+            data = {}
+
+        try:
+            if(len(data) == 0):
+                data = request.body
+                data = json.loads(data)
         except Exception as e:
             data = {}
+            files = {}
         
         if len(data) == 0:
             data = request.POST
@@ -78,7 +87,29 @@ class RequestParser:
         return d
 
     def append(self, key, val):
-        self.data[key] = val
+        try:
+            self.data[key] = val
+        except:
+            try:
+                self.data = self.data.copy()
+                self.data[key] = val
+            except:
+                return self.data[key]
+
+    def compare(self, key1, key2, **kwargs):
+        try:
+            if(str(self.data[key2]) == str(self.data[key1])):
+                if(len(kwargs) != 0):
+                    for key in kwargs:
+                        if str(self.data[key]) != str(self.data[key1]):
+                            return False
+                        else:
+                            continue
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def exists(self, key):
         if key in self.data:
@@ -89,15 +120,18 @@ class RequestParser:
     def __getitem__(self, key):
         return self.data.get(key, None)
 
+    def __setitem__(self, key, val):
+        try:
+            self.data[key] = val
+        except:
+            try:
+                self.data = self.data.copy()
+                self.data[key] = val
+            except:
+                return self.data[key]
+
+    def __len__(self):
+        return len(self.data)
+
     def __str__(self):
         return json.dumps(self.data)
-
-
-class ChatApi:
-    def get_user_rooms(self, username=None):
-        messages = Message.objects.filter(username=username).only('roomname')
-        rooms = []
-        for message in messages:
-            if message.roomname not in rooms:
-                rooms.append(message.roomname)
-        return rooms

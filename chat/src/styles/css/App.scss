@@ -1,0 +1,883 @@
+* { 
+  padding: 0; 
+  margin: 0; 
+  box-sizing: border-box;
+  list-style: none;
+  font-family: New Century Schoolbook, TeX Gyre Schola, serif;
+}
+html, body{
+    height: 99.9%;
+}
+
+:root {
+  --room-gradient:linear-gradient(90deg, rgba(242,43,43,1) 20%, rgba(231,27,8,1) 58%, rgba(250,60,5,1) 85%);
+}
+.AnswerBox {
+  width:100%;
+  height: 100%;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+}
+
+#root{
+  height: 100%;
+  margin: 1px;
+  position: relative;
+}
+
+.RoomContainer{
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.RoomContainer > h2{
+  color:white;
+  margin: 10px;
+  padding:10px;
+  text-shadow: 2px 2px 5px green;
+  box-shadow: 0 0 10px black;
+}
+.RoomForm{
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+  justify-items: center;
+  background: rgb(209,43,61);
+  background: linear-gradient(90deg, rgba(209,43,61,1) 0%, rgba(22,11,12,1) 31%, rgba(110,29,42,1) 47%, rgba(34,17,21,1) 66%, rgba(213,26,98,1) 100%);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px black;
+  animation:flipInX 0.5s linear;
+}
+.RoomForm:hover{
+  box-shadow: 0 0 20px black;
+}
+label{
+  font-weight: bolder;
+  font-size: 20px;
+  color:white;
+}
+.intro{
+  font-weight: bolder;
+  margin-bottom: 10px;
+  font-size:25px;
+  border: 2px solid black;
+  padding: 5px;
+  color:white;
+}
+.input-username, .input-room-name{
+  width:340px;
+  height: 30px;
+  border: 3px solid blue;
+  border-radius: 10px;
+  font-size: 20px;
+  padding: 5px;
+}
+.input-submit{
+  align-self: center;
+  font-size: 20px;
+  padding: 5px;
+  margin-top: 15px;
+}
+.input-submit:hover{
+  background-color:black;
+  color:white;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.available_rooms{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color:white;
+  width: 100%;
+  height: 70%;
+  overflow: scroll;
+  scroll-behavior: smooth;
+}
+.available_rooms ul li{
+  list-style: circle;
+  color:green;
+  font-weight: bolder;
+  font-size: 20px;
+}
+
+
+/* user send message*/
+.right_message_container{
+  animation:bounceIn 0.8s;
+  padding: 5px;
+  align-self: flex-end;
+  background-color: lightgreen;
+  color: black;
+  font-size:20px;
+  min-width: 40%;
+  max-width: 60%;
+  margin-bottom:10px ;
+  border-radius: 10px;
+}
+
+/* user recieve message*/
+.left_message_container{
+  animation:bounceInDown 0.5s;
+  padding: 5px;
+  align-self: flex-start;
+  background-color: white;
+  color: black;
+  font-size:20px;
+  max-width: 60%;
+  margin-bottom:10px ;
+  border-radius: 10px;
+}
+.left_message_container:hover{
+  box-shadow: 0 0 30px green;
+}
+.right_message_container:hover{
+  box-shadow: 0 0 30px green;
+}
+.message_username{
+  background-color: black;
+  color: blue;
+  border:2px solid black;
+  border-radius: 10%;
+}
+
+#clear_message_button{
+  font-size: large;
+  padding: 10px;
+  background-color: lightgreen;
+  margin: 10px;
+}
+
+.show_image{
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-width:400px;
+  max-height: 400px;
+  align-items: flex-end;
+}
+
+.google_search_button{
+  font-size: 15px;
+  padding:5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: black;
+}
+.google_search_button:hover{
+  background-color: black;
+  color: white;
+  box-shadow: 0 0 10px black;
+  cursor: pointer;
+}
+
+.down_arrow_button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  right: 35%;
+  width: 50px;
+  height: 50px;
+  z-index: 1;
+}
+.down_arrow_button:hover{
+  background-color: red;
+}
+.logout_box{
+  position: absolute;
+  top:10px;
+  right: 10px;
+}
+#logout_button{
+  font-size:15px;
+  background-color:red;
+  text-align:center;
+  padding:8px;
+  border-radius:20%;
+  font-weight: bolder;
+}
+#logout_button:hover{
+  background-color:black;
+  color:white;
+}
+/*CSS FOR IMAGE VIEW AND CONTAINERS*/
+
+/*This is when user click on image*/
+.chatbox_image_view_container{
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  background-color: black;
+  display:grid;
+  align-items: center;
+  justify-content:center;
+  padding: 10px;
+  box-shadow: 0 0 20px black;
+  max-width: 650px;
+  max-height:630px;
+  overflow: scroll;
+  color:white;
+  font-weight: bolder;
+  font-size:20px;
+}
+
+/*This class will be added to the image classList so that it's size becomes larger*/
+.show_scaled_image{
+  z-index:2;
+  position: fixed;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+}
+.show_scaled_image > img {
+  width: 100%;
+  height: 100%;
+}
+
+/*Whoever classList contains this class will be blur*/
+.blur{
+  background: rgba(255, 255, 255, 0.5);
+  filter:blur(5px);
+}
+
+.image_button_container{
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  background-color: pink;
+}
+
+.image_buttons{
+  font-size:20px;
+  background-color: lightgreen;
+  padding:5px;
+  margin: 5px;
+}
+
+.image_buttons:hover{
+  background-color: black;
+  color: white;
+}
+
+.answer_text_in_image{
+  color: black;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bolder;
+}
+.chatbox_image_container{
+  display: grid;
+  align-items: center;
+  justify-content:center;
+  background-color: lightgreen;
+  max-width: 410px;
+}
+
+
+/* <----------------------- Top LEVEL DIVS ----------------------> */
+
+.roomcard {
+  display: flex;
+  animation:bounceInDown 2s;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bolder;
+  color:white;
+  border:2px solid white;
+  transition:0.4s all;
+  z-index:1;
+  background-color:black;
+  width:100%;
+  overflow: hidden;
+  border-radius:5px;
+
+  &:hover {
+    background-color: lightgreen;
+    color:black;
+    cursor:pointer;
+  }
+
+  & img {
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    margin:5px;
+  }
+  & button {
+    background-color:white;
+    border-radius:50%;
+    color:black;
+  }
+  & button:hover {
+    background-color:black;
+    color:white;
+    cursor: pointer;
+  }
+}
+
+.roomcontainer{
+  display:grid;
+  grid-template-columns: 30% 70%;
+  height:100%;
+  margin: 1px;
+}
+
+.roomheader{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--room-gradient);
+  flex-direction: column;
+  border:1px solid black;
+}
+.roomheader h1{
+  animation: bounce 1s;
+}
+.roomcontainer__list{
+  display:flex;
+  flex-wrap:wrap;
+  flex-direction:column;
+  background:url('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-10.gif') no-repeat;
+  background-size:cover;
+  height:100%;
+  width: 100%;
+}
+
+.roomlistheader{
+  display:grid;
+  width: 100%;
+  height:10%;
+  border:1px solid black;
+}
+
+.user_profile_container{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  height:100%;
+  background: rgb(214,110,121);
+  background: var(--room-gradient);
+  transition:all 0.5s;
+}
+.user_profile__image{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+}
+.user_profile__image:hover {
+  color:white;
+  background-color:grey;
+  cursor:pointer;
+}
+
+.user_profile__image > img {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+}
+
+.user_profile__p{
+  padding-left:10px;
+  font-size: 24px;
+  font-weight: bolder;
+}
+.user_profile__addroom{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 5px;
+  margin-left:auto;
+  margin-right:5%;
+  border-radius:50%;
+  background-color:black;
+  color:white;
+  font-weight: bolder;
+}
+.user_profile__addroom:hover {
+  cursor: pointer;
+  background-color:white;
+  border:2px solid black;
+  box-shadow:0 0 2px black;
+  color:black;
+}
+
+/* <----------------- Create Room Container -------------------> */
+
+.create_room_container{
+  display:grid;
+  z-index:1;
+  background-color:white;
+  padding: 5px;
+  box-shadow: 0 0 30px black;
+}
+.user_search_container{
+  display: grid;
+  margin: 5px 0px;
+
+  & input {
+    height: 35px;
+    font-size:25px;
+    padding:5px;
+  }
+  & button {
+    font-size:20px;
+    background-color:white;
+    color: black;
+    padding:5px;
+  }
+  & button:hover {
+    background-color:black;
+    color:white;
+    cursor:pointer;
+  }
+}
+.user_search__list{
+  width: 100%;
+}
+.create_room_profileview{
+  border:2px solid black;
+  margin:2px;
+}
+.create_room_profileview:hover{
+  background-color:black;
+  color:white;
+  cursor:pointer;
+}
+.create_room__form{
+  display: grid;
+  background-color: white;
+  padding:5px;
+  z-index:1;
+}
+.create_room__form__input{
+  height: 35px;
+  font-size: 20px;
+  padding: 2px;
+}
+.create_room__form__button{
+  height: 35px;
+  font-size: 20px;
+  font-weight: bolder;
+  background-color:lightgreen;
+}
+.create_room__form__button:hover{
+  cursor:pointer;
+  background-color: black;
+  color:white;
+}
+
+/* <-----------------Update Profile View ---------------> */
+
+label{
+  color:black;
+}
+.update_profile_container{
+  display:grid;
+  font-size: 20px;
+  box-shadow: 0 0 20px black;
+  background-color:white;
+  z-index:1;
+  border:2px solid black;
+  border-radius:2%;
+  padding:15px;
+  position:relative;
+}
+.update_profile__cancel{
+  position:absolute;
+  right:5px;
+  top:5px;
+  background-color:grey;
+  border-radius:25%;
+  padding:5px;
+  padding-bottom:2px;
+}
+.update_profile__cancel:hover{
+  cursor:pointer;
+  background-color:red;
+}
+.update_profile__header{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+  align-content: center;
+  justify-content: center;
+  color:black;
+}
+.update_profile__header > img{
+  width:100px;
+  height:100px;
+  margin: 15px 5px;
+  border-radius:50%;
+}
+.update_profile__header_button{
+  font-size: 18px;
+  padding:10px;
+  background-color:rgb(135, 156, 135);
+  border-radius:20%;
+  cursor:pointer;
+}
+.update_profile__header_button:hover {
+  background-color:black;
+  color:white;
+}
+.update_profile__form{
+  display:flex;
+  flex-wrap:wrap;
+  flex-direction: column;
+  margin:5px;
+}
+.update_profile__form input{
+  height: 40px;
+  font-size:20px;
+  margin:10px 0px;
+}
+
+
+/*  <--------------Room View -------------------> */
+
+.dropzone__over{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color:white ;
+    border-radius:2%;
+    border: 5px dotted green;
+    z-index:3;
+}
+
+.dropzone__over::before{
+  content: "File Will Be Uploaded Directly When You Drop";
+  position:sticky;
+  background-color: white;
+  color:black;
+  box-shadow: 0 0 20px black;
+  border-radius:10%;
+  font-size: 18px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width:90%;
+  height: 10%;
+  top:10px;
+}
+
+.roomcontainer__room{
+  display:grid;
+  grid-template-rows: 10% minmax(200px, 560px) 10%;
+}
+
+.roomcontainer__room__messagebox{
+  display:flex;
+  flex-direction:column;
+  background-image:url('https://i.pinimg.com/originals/58/c3/33/58c33377dfcbb3022493dec49d098b02.jpg');
+  padding:5px 10px;
+  z-index:1;
+  overflow-y:scroll;
+  min-height: 200px;
+  max-height: 600px;
+}
+
+.roomcontainer__room__inputs{
+  display:grid;
+  grid-template-columns: 70% 15% 15%;
+  overflow:hidden;
+}
+.roomcontainer__room__inputs label {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-color:black;
+  color:white;
+  padding:10px;
+}
+
+.roomcontainer__room__inputs label:hover{
+  cursor:pointer;
+  background-color:white;
+  color:black;
+  box-shadow: 0 0 20px black;
+}
+.roomcontainer__list__searchbox{
+  display:grid;
+  height: 8%;
+  background-color: black;
+  align-self:stretch;
+}
+.roomcontainer__list__searchbox input{
+  border-radius: 5%;
+  margin: 2px 5px;
+  padding: 5px 5px;
+  font-size:15px;
+}
+.room_input{
+  font-size:20px;
+  border-radius:2%;
+  margin: 1px;
+  transition:all 0.3s;
+}
+#send_message_button:hover{
+  background-color:black;
+  color:white;
+  cursor:pointer;
+}
+/* ------------------------ Custom Box Layouts------------------- */
+
+/* error box */
+.error_box{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  border:2px solid black;
+  box-shadow: 0 0 10px black;
+  left:50%;
+  top:50%;
+  padding:10px;
+  transform:translate(0%, -20%);
+  animation-name:animate_box;
+  background-color: white;
+  animation-duration:1s;
+  border-radius: 10px;
+  color:red;
+  font-weight: bolder;
+}
+
+@keyframes animate_box{
+  0%{
+    opacity:0;
+    transform:translate(0,-100%);
+  }
+  100%{
+    opacity:1;
+    transform:translate(0%, -20%);
+  }
+}
+.error_box_message{ 
+  font-size:20px;
+  margin:3px;
+}
+
+/* image_to_text_box */
+.image_to_text_box{
+  display: grid;
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  top:50%;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: -200px;
+  background-color: green;
+  font-size: 30px;
+  border-radius: 20%;
+  box-shadow: 0 0 50px black;
+  visibility: hidden;
+  z-index: 2;
+}
+#image_to_text_form{
+  align-self: center;
+  margin-left: 25%;
+  margin-right: auto;
+}
+
+.image_to_text_inputs{
+  height: 20px;
+  width: 30px;
+}
+.image_to_text_description > p {
+  font-size: 20px;
+  color: white;
+}
+.image_to_text_textarea{
+  width: 60%;
+}
+.image_to_text_button{
+  font-size:20px;
+  padding: 5px;
+  border-radius: 10px;
+  margin: 0px 5px;
+}
+.image_to_text_button:hover{
+  background-color: black;
+  color: white;
+}
+
+/* progress box */
+.progress_box {
+  position: absolute;
+  width: 50vw;
+  height: 25%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 50px;
+  text-align: center;
+  background-color: wheat;
+  border-radius: 10%;
+  padding: 10px;
+  box-shadow: 0 0 20px black;
+  visibility: hidden;
+  z-index: 2;
+}
+.progress_line{
+  height: 20px;
+  background-color: green;
+  margin: 10% 5px;
+  border-radius:10%;
+}
+
+.file_container{
+  background-color:green;
+  box-shadow: 0 0 10px solid black;
+  padding: 10px;
+  margin: 2px;
+  max-width: 50%;
+  border:5px solid white;
+  margin-top:10px;
+}
+
+.file_container > a {
+  display: block;
+  padding: 10px;
+  background-color:black;
+  color:white;
+  font-size:20px;
+  text-decoration: none;
+  margin-top:10px;
+  box-shadow: 0 0 5px black;
+}
+.file_container > a:hover{
+  cursor:pointer;
+  background-color:white;
+  color:black;
+}
+
+.lightblue {
+  background-color:lightblue;
+}
+
+.black {
+  background-color:black;
+}
+
+.white {
+  background-color:white;
+}
+
+/* ---------------------Positioning Elements ------------------------ */
+
+.hide {
+  display: none;
+}
+.absolute_center{
+  position :absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex_center_row{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.flex_center_column{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex-direction:column;
+}
+
+
+/*< ---------------- JavaScript Custom Boxes ---------------- >*/
+
+.info_box{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: absolute;
+  left:50%;
+  top:10%;
+  transform: translate(-50%, -50%);
+  animation: slideUp 0.5s;
+  background-color: white;
+  color:black;
+  padding:15px;
+  font-size: 25px;
+  border-radius: 5%;
+  box-shadow: 0 0 20px black;
+  border:5px solid black;
+  z-index:2;
+  animation: slideDown 1s;
+}
+.info_box p{
+  text-align: center;
+}
+@keyframes slideDown {
+  0%{
+    top:-10%;
+  }
+  100%{
+    top:10%;
+  }
+}
+
+.background_image_loading{
+  background: url('http://static.demilked.com/wp-content/uploads/2016/06/gif-animations-replace-loading-screen-2.gif');
+  z-index:3;
+}
+
+.user_list_container {
+  z-index: 1;
+  background-color:black;
+  width: 70%;
+}
+
+.group_card_conntainer {
+  margin-left:10px;
+}
+
+.group_action_button_container {
+  margin-left:auto;
+  margin-right:10px;
+}
+.group_action_button {
+  margin: 1px;
+  margin-left:auto;
+  margin-right:10px;
+  background-color:black;
+  color:white;
+  padding:5px;
+  font-size:15px;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+}

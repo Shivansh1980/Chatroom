@@ -1,11 +1,22 @@
 import $ from 'jquery'
-import Push from 'push.js'
 import { google_icon } from './Icons'
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom';
-import { ImageContainer } from '../minicomponents/ImageContainer';
-
 var color_the_message = false;
+
+export function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 export function initializeLoadingScreen(classname) {
     var loading_box = $("." + classname);
@@ -18,22 +29,33 @@ export function initializeLoadingScreen(classname) {
 
 // Loading the messages from the server to the box
 
-export function loadAllMessages(selector, messages, username, roomname) {
-    for (var i = 0; i < messages.length; i++) {
-        var message = messages[i];
-        if (message.isanswer == true)
-            color_the_message = true;
-        if (roomname === message.roomname) {
-            if (message.username === username) {
-                appendMessageRight(selector, message.message, message.username, message.id);
+export function loadAllMessages(data) {
+    let selector = data.selector;
+    let messages = data.messages;
+    let currentUser = data.currentUser;
+    let currentRoom = data.currentRoom;
+    console.log(messages);
+    let msgbox = document.getElementById(selector);
+
+    if (msgbox) {
+        for (var i = 0; i < messages.length; i++) {
+            var message = messages[i];
+            if (message.isanswer == true)
+                color_the_message = true;
+            if (toString(currentRoom) === toString(message.room)) {
+                if (message.user.id === currentUser.id) {
+                    appendMessageRight(selector, message.message, currentUser.name, message.id);
+                }
+                else {
+                    appendMessageLeft(selector, message.message, message.user.name, message.id);
+                }
             }
-            else {
-                appendMessageLeft(selector, message.message, message.username, message.id);
-            }
+            color_the_message = false;
         }
         color_the_message = false;
+    } else {
+        alert("container for holding messages doesn't exists")
     }
-    color_the_message = false;
 }
 
 export function loadQuestionList(data, username, roomname) {
@@ -65,7 +87,6 @@ export function fetchMessages(client, username, roomname) {
 export function updateMessage(message) {
     let id = 'message_' + message.id;
     let content = document.getElementById(id);
-    console.log('your content : ',content);
     if (content == null) {
         alert('message not exists');
         return;
@@ -137,7 +158,8 @@ export function appendMessageRight(selector, message, username, id=null) {
 
 // Adding the required events
 
-export function addEvents(client, username, roomname) {
+export function addEvents(message_api, username, roomname) {
+    let client = message_api.get_client();
     $('.right_message').unbind("contextmenu").bind("contextmenu", function (e) {
         copyToClipboard(this);
         window.confirm("Copied Successfully")
@@ -156,14 +178,16 @@ export function addEvents(client, username, roomname) {
         else {
             var updated_message = this.innerText + '\nAnswer: ' + answer;
             var current_message = this.innerText;
-            client.send(JSON.stringify({
-                'command': 'update_message',
-                'current_message': current_message,
-                'updated_message': updated_message,
-                'id':this.id,
-                'username': username,
-                'roomname': roomname
-            }));
+            message_api.update_message(
+                {
+                    'command': 'update_message',
+                    'current_message': current_message,
+                    'updated_message': updated_message,
+                    'id': this.id,
+                    'username': username,
+                    'roomname': roomname
+                }
+            );
         }
 
     })
@@ -176,14 +200,16 @@ export function addEvents(client, username, roomname) {
         var updated_message = this.innerText +'\nAnswer: ' + answer;
         var current_message = this.innerText;
 
-        client.send(JSON.stringify({
-            'command': 'update_message',
-            'current_message': current_message,
-            'updated_message': updated_message,
-            'id': this.id,
-            'username': username,
-            'roomname': roomname
-        }));
+        message_api.update_message(
+            {
+                'command': 'update_message',
+                'current_message': current_message,
+                'updated_message': updated_message,
+                'id': this.id,
+                'username': username,
+                'roomname': roomname
+            }
+        );
     })
     $('.google_search_button').unbind("click").bind("click", function (e) {
         var text = e.target.value
@@ -201,29 +227,3 @@ export function copyToClipboard(element) {
     document.execCommand("copy");
 }
 
-export function take_notification_permissions() {
-    if (!Notification) {
-        alert('Desktop Notification not available in your browser');
-        return;
-    }
-    if (Notification.permission != 'granted') {
-        Notification.requestPermission();
-        Push.Permission.get();
-    }
-}
-
-export function showNotification(username, roomname, message) {
-    if (Notification.permission != 'granted')
-        Notification.requestPermission();
-    else {
-        var notification = new Notification(`Awesome Chatroom:\n${roomname}<--${username}`, {
-            body: message,
-            icon: 'https://i.pinimg.com/originals/87/68/a6/8768a6b1df27243034f123988cfdb9d1.jpg'
-        });
-
-        notification.onclick = () => {
-            notification.close();
-            window.parent.focus();
-        }
-    }
-}

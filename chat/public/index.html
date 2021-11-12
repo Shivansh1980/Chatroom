@@ -15,6 +15,7 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -24,17 +25,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <script src='%PUBLIC_URL%/static/js/tesseract.js'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"
+      integrity="sha512-JjFeUD2H//RHt+DjVf1BTuy1X5ZPtMl0svQ3RopX641DWoSilJ89LsFGq4Sw/6BSBfULqUW/CfnVopV5CfvRXA=="
+      crossorigin="anonymous"></script>
       
-    </script>
+    <script src='%PUBLIC_URL%/static/js/tesseract.js'></script>
     <title>Awesome Chatroom</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
-      <div id="loading">
-        <h1 align="center">LOADING PAGE PLEASE WAIT</h1>
-      </div>
+        <img src="%PUBLIC_URL%/static/media/loader1.gif" width="100%" height="100%" style="position:absolute;"/>
     </div>
     <!--
       This HTML file is a template.
