@@ -4,7 +4,6 @@ import axios from 'axios';
 import {createReducer} from '@reduxjs/toolkit'
 
 export const initialRoomState = {
-
     rooms: [],
     loading: false,
     error: null,
