@@ -21,6 +21,7 @@ export class WebMessageHandler {
         
         this.client.onmessage = (e) => {
             const data = JSON.parse(e.data);
+
             //when you fetch all messages
             if (data['type'] === 'messages') {
                 let obj = {
@@ -34,6 +35,7 @@ export class WebMessageHandler {
                     chat.loadAllMessages(obj);
                 }
             }
+
             // when new message arrived
             else if (data.type === 'new_message') {
                 console.log(data);
@@ -52,11 +54,12 @@ export class WebMessageHandler {
                 }
                 let message = data.data;
                 if (message.user.id === this.user.id) {
-                    chat.appendMessageRight(selector, message.message, this.user.name, message.id);
+                    chat.appendMessageRight(selector, message, this.user.name);
                 }
                 else {
-                    chat.appendMessageLeft(selector, message.message, message.user.name, message.id);
+                    chat.appendMessageLeft(selector, message, message.user.name);
                 }
+                chat.performScrollIfRequired("message_box");
             }
                 
             else if (data.type === 'updated_message') {

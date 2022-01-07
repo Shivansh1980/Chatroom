@@ -1,4 +1,3 @@
-import re
 from rest_framework.authentication import BasicAuthentication
 from django.shortcuts import render
 

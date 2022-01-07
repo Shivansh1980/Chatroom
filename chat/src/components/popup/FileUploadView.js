@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import ReactDOM from 'react-dom'
-import '../../styles/css/popup.css'
-import { LinearProgress } from "@material-ui/core"
-import { show_info } from '../../styles/js/AlterCSS'
-import Photoshop from '../containers/Photoshop'
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import '../../styles/css/popup.css';
+import { LinearProgress } from "@material-ui/core";
+import { show_info } from '../../styles/js/AlterCSS';
+import Photoshop from '../containers/Photoshop';
+import FileView from '../containers/FileView';
+
 
 function FileUploadView(props) {
     let root = document.getElementById('root');
@@ -89,6 +91,14 @@ function FileUploadView(props) {
         self.classList.add('photoshop');
         ReactDOM.render(<Photoshop image={file} messageApi={message_api} self={self}/>, self);
     }
+
+    function showFile() {
+        let div = document.createElement('div');
+        div.className = 'file_view_container absolute_center';
+        div.id = 'file_view_id';
+        document.body.append(div);
+        ReactDOM.render(<FileView self={div} file={file} />, div);
+    }
     if (!loading) {
         return (
             <>
@@ -111,6 +121,7 @@ function FileUploadView(props) {
                             <input id="direct_upload" name="du" type="checkbox" />
                             <label htmlFor="direct_upload">Direct Upload</label>
                         </div>
+                        <input type="button" value="View File" onClick={ showFile }/>
                         <input type="submit" value='Upload' />
 
                         { is_image_file() ?

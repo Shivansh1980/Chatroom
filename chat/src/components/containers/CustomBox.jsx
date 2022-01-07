@@ -75,7 +75,7 @@ export class CustomBox extends Component {
             else return (
                 <div className="absolute_center">
                     <CircularProgress size={70} />
-                    <h2>Please Wait Loading</h2>
+                    <h2>{this.props.message ? this.props.message : "Please Wait Loading"}</h2>
                 </div>
             )
         }

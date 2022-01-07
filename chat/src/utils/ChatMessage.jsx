@@ -1,6 +1,5 @@
 import $ from 'jquery'
 import { google_icon } from './Icons'
-var color_the_message = false;
 
 export function getCookie(name) {
     var cookieValue = null;
@@ -34,25 +33,21 @@ export function loadAllMessages(data) {
     let messages = data.messages;
     let currentUser = data.currentUser;
     let currentRoom = data.currentRoom;
-    console.log(messages);
     let msgbox = document.getElementById(selector);
 
     if (msgbox) {
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
-            if (message.isanswer == true)
-                color_the_message = true;
             if (toString(currentRoom) === toString(message.room)) {
                 if (message.user.id === currentUser.id) {
-                    appendMessageRight(selector, message.message, currentUser.name, message.id);
+                    appendMessageRight(selector, message, currentUser.name);
                 }
                 else {
-                    appendMessageLeft(selector, message.message, message.user.name, message.id);
+                    appendMessageLeft(selector, message, message.user.name);
                 }
             }
-            color_the_message = false;
         }
-        color_the_message = false;
+        msgbox.scrollTop = msgbox.scrollHeight;
     } else {
         alert("container for holding messages doesn't exists")
     }
@@ -93,8 +88,19 @@ export function updateMessage(message) {
     }
     content.innerText = message.message;
 }
+export function performScrollIfRequired(selector) {
+    let box = document.querySelector("#" + selector);
+    let curHeight = box.scrollTop + box.clientHeight;
+    let belowHeight = box.scrollHeight - curHeight;
+    if (belowHeight < (2 * box.clientHeight)) {
+        box.scrollTop = box.scrollHeight;
+    }
+    console.log("current Height: ", curHeight);
+    console.log("below Height: ", belowHeight);
+}
 
-export function appendMessageLeft(selector, message, username, id=null) {
+export function appendMessageLeft(selector, message, username) {
+    let id = message.id;
     var parentElement = document.querySelector("#" + selector);
     var div = document.createElement('div');
     div.setAttribute('class', 'left_message_container');
@@ -107,24 +113,20 @@ export function appendMessageLeft(selector, message, username, id=null) {
     $(div).append(h);
 
     //adding google search button
-    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message.message}'">${google_icon} Search on Google</button>`);
 
     //adding message
     var child = document.createElement('p');
     child.setAttribute('class', 'left_message');
     if(id != null) child.setAttribute('id', 'message_'+id);
-    if (color_the_message == true) {
-        child.style.backgroundColor = 'cyan'
-        child.style.padding = '5px';
-    }
-    child.innerText = message;
+    child.innerText = message.message;
     $(div).append(child);
 
     parentElement.appendChild(div);
 }
 
-
-export function appendMessageRight(selector, message, username, id=null) {
+export function appendMessageRight(selector, message, username) {
+    let id = message.id;
     var parentElement = document.querySelector("#"+selector);
 
     var div = document.createElement('div');
@@ -138,20 +140,15 @@ export function appendMessageRight(selector, message, username, id=null) {
     $(div).append(h);
 
     //adding google search button
-    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message.message}'">${google_icon} Search on Google</button>`);
 
     //adding message
     var child = document.createElement('p');
     child.setAttribute('class', 'right_message');
-    if (id != null) child.setAttribute('id', 'message_'+id);
-
-    if (color_the_message == true) {
-        child.style.backgroundColor = 'cyan'
-        child.style.padding = '5px';
-    }
-    child.innerText = message;
+    if (id != null) child.setAttribute('id', 'message_' + id);
+    
+    child.innerText = message.message;
     $(div).append(child);
-
     parentElement.appendChild(div);
 }
 

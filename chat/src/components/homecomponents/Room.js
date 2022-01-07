@@ -68,6 +68,19 @@ export default function Room(props) {
             }
         })
     }
+    function uploadFile(file) {
+        var div = document.createElement('div');
+        div.classList.add('absolute_center');
+        div.classList.add('popup_file__container')
+        document.body.append(div);
+        ReactDOM.render(
+            <FileUploadView
+                message_api={messageApi}
+                file={file}
+                self={div}
+            />, div
+        );
+    }
 
     useEffect(() => {
         if (roomState.currentRoom) {
@@ -116,6 +129,7 @@ export default function Room(props) {
         document.getElementById('input_message').value = ''
     }
 
+    //selected => if user clicked on some room or not.
     if (selected && !loading) {
         return (
             <>
@@ -123,21 +137,8 @@ export default function Room(props) {
                 <div className="roomcontainer__room__inputs">
                     <textarea id="input_message" className="room_input" type="text" placeholder="Enter Your Message Here : " />
                     <button id="send_message_button" className="room_input" type="submit" onClick={handleSendMessage}>Send Message</button>
-                    <input ref={fileInputRef} id='input_room_file' className="room_input" type='file' hidden/>
+                    <input ref={fileInputRef} id='input_room_file' className="room_input" type='file' hidden onChange={(e) => uploadFile(e.target.files[0])} />
                     <label htmlFor="input_room_file">Upload File</label>
-                </div>
-            </>
-        )
-    }
-    else if (!selected && !loading) {
-        return (
-            <>
-                <div className="roomcontainer__room__messagebox flex_center_column">
-                    <h1 align="center" style={{ color: 'white' }}>Please Select Any Room To Connect.</h1>
-                </div>
-                <div className="roomcontainer__room__inputs">
-                    <textarea id="input_message" className="room_input" type="text" placeholder="Enter Your Message Here : " />
-                    <button id="send_message_button" className="room_input" type="submit">Send Message</button>
                 </div>
             </>
         )
@@ -146,8 +147,18 @@ export default function Room(props) {
         return (
             <>
                 <div className="roomcontainer__room__messagebox flex_center_column">
-                    <CircularProgress size={70} />
-                    <h2 style={{ color: 'white' }}>Connecting To Room</h2>
+                    { !selected && !loading ?
+                        <h1 align="center" style={{ color: 'white' }}>
+                            Please Select Any Room To Connect.
+                        </h1>
+                        :
+                        loading ?
+                            <div className="flex_center_column">
+                                <CircularProgress size={70} />
+                                <h2 style={{ color: 'white' }}>Connecting To Room</h2>
+                            </div>
+                            : null
+                    }
                 </div>
                 <div className="roomcontainer__room__inputs">
                     <textarea id="input_message" className="room_input" type="text" placeholder="Enter Your Message Here : " />
@@ -156,5 +167,4 @@ export default function Room(props) {
             </>
         )
     }
-    
 }
