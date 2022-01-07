@@ -239,12 +239,13 @@ class RoomController:
             if userprofile:
                 rooms = Room.objects.filter(Q(user1__id=userprofile.id) | Q(user2__id=userprofile.id))
                 serializer = RoomSerializer(rooms, many=True)
-                groups = ChatGroup.objects.filter(Q(users__id=userprofile.id)).distinct()
+                groups = ChatGroup.objects.filter(Q(users__id = userprofile.id)).distinct()
                 groupserializer = ChatGroupSerializer(groups, many=True)
                 return {'status': True, 'data': {'rooms_data':serializer.data, 'groups_data':groupserializer.data} }
             else:
                 return {'status': False, 'error': 'User does not exists'}
         except Exception as e:
+            print(e)
             return {'status':False,'error':str(e)}
 
     def get_messages_by_group_id(self, group_id):

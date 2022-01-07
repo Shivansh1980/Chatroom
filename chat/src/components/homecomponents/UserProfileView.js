@@ -9,7 +9,7 @@ import { show_info } from '../../styles/js/AlterCSS'
 import * as Actions from '../../redux/actions'
 import { api_url } from '../../global'
 import CreateRoomView from '../popup/CreateRoomView'
-import {CircularProgress} from '@material-ui/core'
+import { CircularProgress } from '@material-ui/core'
 
 function UpdateProfileView(props) {
     let user = props.user;
@@ -57,7 +57,7 @@ function UpdateProfileView(props) {
             });
         }
         else {
-            alert("You can't leave any field empty")
+            alert("You can't leave any field empty");
         }
         e.preventDefault();
     }
@@ -109,7 +109,9 @@ function UpdateProfileView(props) {
 }
 
 export default function UserProfileView(props) {
-    let user = useSelector((state) => state.userData.user);
+    let userData = useSelector((state) => state.userData);
+    let user = userData.user;
+    let username = userData.username;
     
     function handleOpen(e) {
         let div = document.createElement('div');
@@ -131,7 +133,7 @@ export default function UserProfileView(props) {
         document.body.appendChild(div);
         ReactDOM.render(
             <Provider store={store}>
-                <CreateRoomView self={div} user={user} />
+                <CreateRoomView self={div} user={user}/>
             </Provider>, div
         );
         div.classList.add('create_room_container');
@@ -147,11 +149,13 @@ export default function UserProfileView(props) {
             <div className="user_profile__image" onClick={handleOpen}>
                 <img id={'user_image_' + user.id} src={user.pic != null && user.pic != '' ? api_url+user.pic : 'https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png'} />
             </div>
-            <p className="user_profile__p">{user.name}</p>
+            <div>
+                <p className="user_profile__p">{user.name}</p>
+                <p>{ username }</p>
+            </div>
             <div className="user_profile__addroom" onClick={handleCreateRoom}>
                 <BsPlus size={ 20 }/>
             </div>
-
         </div>
     )
 }

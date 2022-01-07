@@ -27,11 +27,11 @@ function Home(props) {
         dispatch({type: 'UpdateLoading',payload: true})
         dispatch(Actions.updateUsername(username));
         dispatch(Actions.updatePassword(password));
+
         api.setMethod('post');
         api.makeRequest('/api/chat/command/get_saved_rooms/').then((response) => {
             let res = response.data;
             if (res.status == true) {
-                dispatch(Actions.updateLoading(false))
                 dispatch(Actions.updateRooms(res.data));
             }
             else {
@@ -44,8 +44,12 @@ function Home(props) {
             dispatch(Actions.updateError(error.message));
         });
         api.setMethod('get');
-        api.makeRequest('/api/chat/user/').then(response => dispatch(Actions.updateUser(response.data)) );
+        api.makeRequest('/api/chat/user/').then(response => {
+            dispatch(Actions.updateUser(response.data));
+            dispatch(Actions.updateLoading(false));
+        });
     }, []);
+    
     useEffect(() => {
         if (roomState.currentRoom) {
             setDrawer(false);
@@ -61,9 +65,10 @@ function Home(props) {
     // If the screen is not tablet or phone that means its a PC and since its a pc so no need of drawer. Otherwise Drawer
     // is required.
     if (!isTabletOrMobile) {
-        header = <div id="room_navigation" className="roomcontainer__list layout">
-            <RoomNavigation/>
-        </div>
+        header =
+            <div id="room_navigation" className="roomcontainer__list layout">
+                <RoomNavigation/>
+            </div>
     } else {
         if (drawer)
             header =

@@ -30,6 +30,9 @@ class ChatGroup(models.Model):
     admin = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="admin")
     users = models.ManyToManyField(UserProfile, related_name='chatgroup')
 
+    def __str__(self):
+        return str(self.id) + ' -> '+ self.group_name
+
 class Message(models.Model):
     id       = models.AutoField(primary_key=True)
     user     = models.ForeignKey(UserProfile, on_delete=models.CASCADE)

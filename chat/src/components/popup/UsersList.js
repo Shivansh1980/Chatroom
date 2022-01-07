@@ -10,6 +10,10 @@ import {getCookie} from '../../utils/ChatMessage'
 export default function UsersList(props) {
     let self = props.self;
     let mode = props.mode;
+    let heading = props.heading;
+    if (heading == null || heading == "") {
+        heading = "User List"
+    }
 
     let userData = useSelector(state => state.userData);
 
@@ -100,7 +104,8 @@ export default function UsersList(props) {
     }, [searchedUsername]);
 
     return (
-        <>  
+        <>
+            <h2 align="center" style={{ color: "white", margin:"5px"}}>{heading}</h2>
             <div className="update_profile__cancel" onClick={removeSelf}>
                 <ImCross />
             </div>

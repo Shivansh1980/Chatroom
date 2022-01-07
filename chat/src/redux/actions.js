@@ -1,3 +1,4 @@
+//loading for home component it will be true when the rooms are being loaded from server.
 export const updateLoading = (loading) => {
     return {
         type:'UpdateLoading',
@@ -27,7 +28,6 @@ export const updateError = (error) => {
         payload: error
     }
 }
-
 export const updateCurrentRoom = (room) => {
     return {
         type: 'UpdateCurrentRoom',
@@ -58,14 +58,12 @@ export const updateMessageApi = (message_api) => {
         payload: message_api
     }
 }
-
 export const updateUser = (user) => {
     return {
         type: 'UpdateUser',
         payload: user
     }
 }
-
 export const updateRoomLoading = (loading) => {
     return {
         type: 'UpdateRoomLoading',
