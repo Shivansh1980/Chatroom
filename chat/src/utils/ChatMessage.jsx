@@ -113,7 +113,8 @@ export function appendMessageLeft(selector, message, username) {
     $(div).append(h);
 
     //adding google search button
-    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message.message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button id="google_search_button" class="message_buttons" value='${message.message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button id="copy_message_button" class="message_buttons" value='${message.message}'"> Copy </button>`);
 
     //adding message
     var child = document.createElement('p');
@@ -140,7 +141,8 @@ export function appendMessageRight(selector, message, username) {
     $(div).append(h);
 
     //adding google search button
-    $(div).append(`<button id="google_search_button" class="google_search_button" value='${message.message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button class="message_buttons google_search_button" value='${message.message}'">${google_icon} Search on Google</button>`);
+    $(div).append(`<button class="message_buttons copy_message_button" value='${message.message}'"> Copy </button>`);
 
     //adding message
     var child = document.createElement('p');
@@ -157,16 +159,24 @@ export function appendMessageRight(selector, message, username) {
 
 export function addEvents(message_api, username, roomname) {
     let client = message_api.get_client();
-    $('.right_message').unbind("contextmenu").bind("contextmenu", function (e) {
-        copyToClipboard(this);
+    $('.copy_message_button').unbind("click").bind("click", function (e) {
+        let text = e.target.parentElement.innerText;
+        copyTextToClipboard(text);
         window.confirm("Copied Successfully")
         return false;
     })
-    $('.left_message').unbind("contextmenu").bind("contextmenu", function (e) {
-        copyToClipboard(this);
-        window.confirm("Copied Successfully")
+    $('.copy_message_button').unbind("click").bind("click", function (e) {
+        let text = e.target.parentElement.innerText;
+        copyTextToClipboard(text);
+        window.confirm("Copied Successfully");
         return false;
     })
+    $('.google_search_button').unbind("click").bind("click", function (e) {
+        var text = e.target.value
+        var search = "http://www.google.com/search?q=" + text;
+        window.open(search, "_blank");
+    })
+
     $('.right_message').unbind("click").bind("click", function () {
         var answer = prompt('Enter Answer : ');
         if (answer === null || answer === "") {
@@ -208,19 +218,42 @@ export function addEvents(message_api, username, roomname) {
             }
         );
     })
-    $('.google_search_button').unbind("click").bind("click", function (e) {
-        var text = e.target.value
-        var search = "http://www.google.com/search?q=" + text;
-        window.open(search, "_blank");
-    })
 }
 
 // Showing the Notifications
+export function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
 
-export function copyToClipboard(element) {
-    var $temp = $("<p id='copy_it'>");
-    $("body").append($temp);
-    $temp.val($(element).text()).select();
-    document.execCommand("copy");
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Fallback: Copying text command was ' + msg);
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+export function copyTextToClipboard(text) {
+    if (!navigator.clipboard) {
+        fallbackCopyTextToClipboard(text);
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function () {
+        console.log('Async: Copying to clipboard was successful!');
+    }, function (err) {
+        console.error('Async: Could not copy text: ', err);
+    });
 }
 
