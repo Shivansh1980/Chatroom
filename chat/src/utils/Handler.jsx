@@ -38,7 +38,6 @@ export class WebMessageHandler {
 
             // when new message arrived
             else if (data.type === 'new_message') {
-                console.log(data);
                 if (data.status == false) {
                     show_info({
                         title: 'Posted Data Not Sufficient',

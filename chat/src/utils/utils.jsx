@@ -8,7 +8,6 @@ import $ from 'jquery';
 
 
 export function toDataURL(file, callback) {
-
     var reader = new FileReader();
     reader.onload = function () {
         var dataURL = reader.result;

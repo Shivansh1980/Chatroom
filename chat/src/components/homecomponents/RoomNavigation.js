@@ -12,7 +12,7 @@ import { Provider } from 'react-redux'
 import { ApiRequester } from '../../utils/utils'
 import { show_info } from '../../styles/js/AlterCSS';
 import { useMediaQuery } from 'react-responsive';
-import ImageView from '../containers/ImageView' 
+import ImageView from '../containers/ImageView';
 
 function RoomNavigation(props) {
     const dispatch = useDispatch();

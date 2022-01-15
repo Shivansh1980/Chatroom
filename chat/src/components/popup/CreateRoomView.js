@@ -58,6 +58,8 @@ export default function CreateRoomView(props) {
         formData.append('room_name', room_name);
         formData.append('user2_id', user2_id);
         formData.append('room_image', room_image);
+
+        alert('sending request');
         
         let api = new ApiRequester(userData.username, userData.password);
         api.setMethod('POST');
