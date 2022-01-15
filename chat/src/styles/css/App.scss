@@ -144,6 +144,15 @@ label{
 .right_message_container:hover{
   box-shadow: 0 0 30px green;
 }
+
+.message_buttons {
+  font-size: 15px;
+  padding:5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: black;
+}
+
 .message_username{
   background-color: black;
   color: blue;
@@ -165,20 +174,6 @@ label{
   max-width:400px;
   max-height: 400px;
   align-items: flex-end;
-}
-
-.google_search_button{
-  font-size: 15px;
-  padding:5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  color: black;
-}
-.google_search_button:hover{
-  background-color: black;
-  color: white;
-  box-shadow: 0 0 10px black;
-  cursor: pointer;
 }
 
 .down_arrow_button{
