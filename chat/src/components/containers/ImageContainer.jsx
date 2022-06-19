@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Paper from '@material-ui/core/Paper';
 import {imageStyles} from '../../styles/js/ChatStyles'
 import { withStyles } from "@material-ui/core/styles";

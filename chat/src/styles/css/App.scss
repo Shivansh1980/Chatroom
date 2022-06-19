@@ -145,6 +145,10 @@ label{
   box-shadow: 0 0 30px green;
 }
 
+.code_message {
+  overflow: scroll;
+  max-height:400px;
+}
 .message_buttons {
   font-size: 15px;
   padding:5px;

@@ -1,5 +1,8 @@
 import $ from 'jquery'
 import { google_icon } from './Icons'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import CodeView from '../components/containers/CodeView'
 
 export function getCookie(name) {
     var cookieValue = null;
@@ -119,11 +122,18 @@ export function appendMessageLeft(selector, message, username) {
     //adding message
     var child = document.createElement('p');
     child.setAttribute('class', 'left_message');
-    if(id != null) child.setAttribute('id', 'message_'+id);
-    child.innerText = message.message;
-    $(div).append(child);
-
-    parentElement.appendChild(div);
+    if (id != null) child.setAttribute('id', 'message_' + id);
+    
+    if (message.iscode) {
+        child.classList.add('code_message');
+        $(div).append(child);
+        parentElement.appendChild(div);
+        ReactDOM.render(<CodeView language="cpp" code={message.message} self={child} />, child);
+    } else {
+        child.innerText = message.message;
+        $(div).append(child);
+        parentElement.appendChild(div);
+    }
 }
 
 export function appendMessageRight(selector, message, username) {
@@ -148,10 +158,17 @@ export function appendMessageRight(selector, message, username) {
     var child = document.createElement('p');
     child.setAttribute('class', 'right_message');
     if (id != null) child.setAttribute('id', 'message_' + id);
-    
-    child.innerText = message.message;
-    $(div).append(child);
-    parentElement.appendChild(div);
+    console.log(message);
+    if (message.iscode) {
+        child.classList.add('code_message');
+        $(div).append(child);
+        parentElement.appendChild(div);
+        ReactDOM.render(<CodeView language="cpp" code={message.message} self={child} />, child);
+    } else {
+        child.innerText = message.message;
+        $(div).append(child);
+        parentElement.appendChild(div);
+    }
 }
 
 

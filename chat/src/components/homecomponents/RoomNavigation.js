@@ -157,7 +157,7 @@ function RoomNavigation(props) {
                     </div>
                 );
             } else {
-                let user = userData.user.id == rooms[i].user1.id ? rooms[i].user2 : rooms[i].user1;
+                let user = userData.user.id === rooms[i].user1.id ? rooms[i].user2 : rooms[i].user1;
                 data.push(
                     <div key={'room_card_container_'+rooms[i].id} id={'room_card_container_' + rooms[i].id} className="roomcard relative" onClick={e => handleRoomChange(e, 'room_' + rooms[i].id)}>
                         <div id={'room_' + rooms[i].id} className="room_card_image_container">

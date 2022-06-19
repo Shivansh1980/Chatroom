@@ -160,17 +160,18 @@ class RoomController:
                 return False
         
 
-    def save_message(self, room_id=None, group_id=None, message=None, user_id=None):
+    def save_message(self, room_id=None, group_id=None, message=None, user_id=None, **args):
         if group_id is not None:
             room_id = group_id
-
         try:
             if not message or not room_id or not user_id:
                 return {'status': False, 'message':'message, user and room_id required'}
 
+            iscode = args.get('iscode', False)
+
             if self.is_group:
                 if ChatGroup.objects.filter(id=room_id).exists():
-                    message = MessageSerializer(data={'group': room_id, 'message': message, 'user_id': user_id})
+                    message = MessageSerializer(data={'group': room_id, 'message': message, 'user_id': user_id, 'iscode':iscode})
                     if message.is_valid():
                         obj = message.save()
                         return {'status': True, 'message': message.data, 'id': obj.id}
@@ -440,10 +441,12 @@ class ChatRequestProcessor:
     def new_message(self, data):
         data['room_id'] = self.consumer.room_id
         data['user_id'] = self.user.id
+        
         response = self.room.save_message(
             room_id = data.get('room_id'),
             message = data.get('message'),
-            user_id = data.get('user_id')
+            user_id = data.get('user_id'),
+            iscode = data.get('iscode', False),
         )
         if response['status'] == True:
             return {'status': True, 'type': 'new_message', 'data': response['message'], 'id': response['id']}
