@@ -43,6 +43,7 @@ class Message(models.Model):
     group    = models.ForeignKey(ChatGroup, related_name='chatgroup', on_delete=models.CASCADE, default=None, blank=True, null=True)
     isanswer = models.BooleanField(default=False)
     isfile   = models.BooleanField(default=False)
+    iscode   = models.BooleanField(default=False)
     type     = models.CharField(max_length=40, default='text', blank=True, null=True)
 
     def clean(self):
