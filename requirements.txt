@@ -1,12 +1,12 @@
 django
 channels
-django_rest_framework
+djangorestframework
 django-sslserver
 django-cors-headers
 pytz
 djangorestframework-simplejwt
 pillow
-channels-redis
+channels_redis
 redis
 django-redis
 gunicorn
