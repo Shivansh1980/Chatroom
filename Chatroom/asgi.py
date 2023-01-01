@@ -26,6 +26,7 @@ from chatapp.middlewares import BasicAuthMiddlewareStack
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Chatroom.settings')
 
+print('selecting request type ws or http')
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": BasicAuthMiddlewareStack(
